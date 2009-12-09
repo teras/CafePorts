@@ -1,0 +1,50 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.panayotis.cafeports.filter;
+
+import com.panayotis.cafeports.db.PortInfo;
+import com.panayotis.utilities.MutableArray;
+import com.panayotis.utilities.ImmutableList;
+
+/**
+ *
+ * @author teras
+ */
+public abstract class PortData implements Nameable {
+
+    private final String name;
+    private final MutableArray<Operation> ops;
+
+    public PortData(String name) {
+        if (name == null)
+            throw new NullPointerException("Source name could not be null");
+        this.name = name;
+        ops = new MutableArray<Operation>();
+    }
+
+    public PortData clone() {
+        PortData s = null;
+        try {
+            s = getClass().newInstance();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return s;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    protected void addOperation(Operation op) {
+        ops.add(op);
+    }
+
+    public ImmutableList<Operation> getOperations() {
+        return ops;
+    }
+
+    public abstract String getData(PortInfo p);
+}
