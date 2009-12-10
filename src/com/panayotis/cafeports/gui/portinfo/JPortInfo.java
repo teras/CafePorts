@@ -13,8 +13,13 @@ package com.panayotis.cafeports.gui.portinfo;
 import com.panayotis.cafeports.db.PortInfo;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Font;
 import java.awt.Window;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import javax.swing.BoxLayout;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
@@ -23,7 +28,7 @@ import javax.swing.border.EmptyBorder;
  *
  * @author teras
  */
-public class JPortInfo extends javax.swing.JFrame {
+public class JPortInfo extends javax.swing.JFrame implements MouseListener {
 
     private final static int BORDEREDGE = 8;
     private final static int TEXTGAP = 4;
@@ -40,12 +45,14 @@ public class JPortInfo extends javax.swing.JFrame {
     private final JClearButton url;
     private final JClearEmail email;
     /* */
-    private boolean first_run = true;
+    private int dx = 5;
+    private int dy = 0;
+    private boolean enable_self_movement = false;
 
     /** Creates new form JPortInfo */
-    public JPortInfo(Window frame) {
+    public JPortInfo(Window parentframe) {
         name = new JRoundEdge(16, 16);
-        this.frame = frame;
+        frame = parentframe;
         url = new JClearButton();
         email = new JClearEmail();
 
@@ -83,6 +90,21 @@ public class JPortInfo extends javax.swing.JFrame {
         pack();
         setResizable(false);
         updateInfo(null);
+        updateLocation();
+
+        addComponentListener(new ComponentAdapter() {
+
+            public void componentMoved(ComponentEvent ev) {
+                if (!enable_self_movement)
+                    return;
+                System.out.println("**");
+                Component c = ev.getComponent();
+                dx = c.getX() - (frame.getX() + frame.getWidth());
+                dy = c.getY() - frame.getY();
+            }
+        });
+        getGlassPane().setVisible(true);
+        getGlassPane().addMouseListener(this);
     }
 
     public void updateInfo(final PortInfo info) {
@@ -114,12 +136,14 @@ public class JPortInfo extends javax.swing.JFrame {
     }
 
     public void setVisible(boolean status) {
-        if (first_run)
-            setLocation(frame.getX() + frame.getWidth() + 4, frame.getY());
-        first_run = false;
+        updateLocation();
         super.setVisible(status);
         if (!status)
             dispose();
+    }
+
+    public void updateLocation() {
+        setLocation(frame.getX() + frame.getWidth() + dx, frame.getY() + dy);
     }
 
     private JClearLabel initLabel(String name, int border) {
@@ -173,5 +197,25 @@ public class JPortInfo extends javax.swing.JFrame {
 
         viewport.add(area);
         return valueT;
+    }
+
+    public void mouseClicked(MouseEvent arg0) {
+        System.out.println("click!");
+    }
+
+    public void mousePressed(MouseEvent arg0) {
+        enable_self_movement = true;
+  //      getGlassPane().setVisible(false);
+    }
+
+    public void mouseReleased(MouseEvent arg0) {
+        enable_self_movement = false;
+   //     getGlassPane().setVisible(true);
+    }
+
+    public void mouseEntered(MouseEvent arg0) {
+    }
+
+    public void mouseExited(MouseEvent arg0) {
     }
 }

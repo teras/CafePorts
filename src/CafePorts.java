@@ -4,8 +4,6 @@
  */
 
 import com.panayotis.cafeports.config.CafePortsApp;
-import com.panayotis.cafeports.config.Config;
-import com.panayotis.cafeports.config.ConfigListener;
 import com.panayotis.cafeports.gui.JPortWindow;
 
 /**

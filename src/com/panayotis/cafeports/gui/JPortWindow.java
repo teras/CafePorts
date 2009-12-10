@@ -13,6 +13,7 @@ import com.panayotis.cafeports.gui.portinfo.JPortInfo;
 import com.panayotis.cafeports.gui.table.JPortList;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -61,6 +62,17 @@ public class JPortWindow extends JFrame {
                     info.updateInfo(null);
                 else
                     info.updateInfo(selected[0]);
+            }
+        });
+
+        addComponentListener(new ComponentAdapter() {
+
+            public void componentResized(ComponentEvent ev) {
+                info.updateLocation();
+            }
+
+            public void componentMoved(ComponentEvent ev) {
+                info.updateLocation();
             }
         });
 
