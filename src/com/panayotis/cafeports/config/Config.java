@@ -6,6 +6,7 @@ package com.panayotis.cafeports.config;
 
 import java.io.File;
 import java.util.HashSet;
+import java.util.prefs.Preferences;
 
 /**
  *
@@ -14,6 +15,8 @@ import java.util.HashSet;
 public class Config {
 
     public static Config base = new Config();
+    static final String PREFIX_PREF = "PREFIX_DIR";
+    /* */
     static final String DEFAULT_PREFIX_DIR = "/opt/localy/";
     static final String DEFAULT_SOURCE = "rsync.macports.org";
     /* */
@@ -32,9 +35,12 @@ public class Config {
     private boolean backup_status;
     /* */
     private HashSet<ConfigListener> listeners;
+    /* */
+    Preferences prefs;
 
     public Config() {
-        prefix = DEFAULT_PREFIX_DIR;
+        prefs = Preferences.userNodeForPackage(Config.class);
+        prefix = prefs.get(PREFIX_PREF, DEFAULT_PREFIX_DIR);
         current_prefix_valid = true;
         listeners = new HashSet<ConfigListener>();
     }
@@ -68,11 +74,11 @@ public class Config {
     public synchronized void setPrefix(String prefix) {
         if (!prefix.endsWith(File.separator))
             prefix += File.separator;
-//        if (this.prefix.equals(prefix))
-//            return;
+        if (this.prefix.equals(prefix))
+            return;
         this.prefix = prefix;
         current_prefix_valid = true;    // Be optimistic!
-        current_prefix_valid = isPrefixValid();
+        prefs.put(PREFIX_PREF, prefix);
         if (current_prefix_valid)
             for (ConfigListener listener : listeners)
                 listener.configIsUpdated();
