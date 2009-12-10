@@ -93,4 +93,8 @@ public class JPortList extends JScrollPane {
             col.setMaxWidth(i == 0 ? PortListModel.FIRST_COLUMN_SIZE : PortListModel.MAXIMUM_COLUMN_SIZE);
         }
     }
+
+    public void clearList() {
+        sorter.setTableModel(new PortListModel(PortList.getEmptyPortList()));
+    }
 }

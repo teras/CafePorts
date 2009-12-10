@@ -8,7 +8,6 @@ import com.panayotis.cafeports.config.Config;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -38,7 +37,7 @@ public class PortParser {
         } finally {
             try {
                 in.close();
-            } catch (IOException ex) {
+            } catch (Exception ex) {
             }
         }
     }

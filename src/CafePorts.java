@@ -4,6 +4,8 @@
  */
 
 import com.panayotis.cafeports.config.CafePortsApp;
+import com.panayotis.cafeports.config.Config;
+import com.panayotis.cafeports.config.ConfigListener;
 import com.panayotis.cafeports.gui.JPortWindow;
 
 /**
@@ -16,6 +18,6 @@ public class CafePorts {
         new CafePortsApp();
         final JPortWindow w = new JPortWindow();
         w.setVisible(true);
-        w.initTable();
+        w.triggerDataIntialization();
     }
 }

@@ -51,6 +51,11 @@ public class PortList {
         return base;
     }
 
+    public static final void invalidatePortLists() {
+        base = null;
+        filtered = null;
+    }
+
     public static final PortList getEmptyPortList() {
         return empty;
     }

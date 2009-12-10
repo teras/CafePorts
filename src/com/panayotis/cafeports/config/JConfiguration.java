@@ -23,8 +23,10 @@ import javax.swing.JOptionPane;
  */
 public class JConfiguration extends javax.swing.JDialog {
 
+    public static final JConfiguration dialog = new JConfiguration();
+
     /** Creates new form JConfiguration */
-    public JConfiguration() {
+    private JConfiguration() {
         super();
         initComponents();
         BrowseB.putClientProperty("JButton.buttonType", "textured");
@@ -88,12 +90,15 @@ public class JConfiguration extends javax.swing.JDialog {
         fc.setDialogType(JFileChooser.OPEN_DIALOG);
         disableNewFolderButton(fc);
         int result = fc.showOpenDialog(this);
-        if (result == JFileChooser.APPROVE_OPTION)
-            if (Config.isPrefixValid(fc.getSelectedFile().getPath())) {
-                Config.base.setPrefix(fc.getSelectedFile().getPath());
-                PrefixT.setText(Config.base.getPrefix());
-            } else
+        if (result == JFileChooser.APPROVE_OPTION) {
+            Config.base.backup();
+            Config.base.setPrefix(fc.getSelectedFile().getPath());
+            if (!Config.base.isPrefixValid()) {
+                Config.base.restore();
                 JOptionPane.showMessageDialog(this, "Selected path is not a valid MacPorts distribution");
+            }
+            PrefixT.setText(Config.base.getPrefix());
+        }
     }//GEN-LAST:event_BrowseBActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BrowseB;
@@ -103,15 +108,12 @@ public class JConfiguration extends javax.swing.JDialog {
     private javax.swing.JPanel jPanel4;
     // End of variables declaration//GEN-END:variables
 
-    public void setVisible(boolean status) {
-        if (status)
-            PrefixT.setText(Config.base.getPrefix());
-        else
-            dispose();
-        super.setVisible(status);
+    public void fireDisplay() {
+        PrefixT.setText(Config.base.getPrefix());
+        setVisible(true);
     }
 
-    public void disableNewFolderButton(Container c) {
+    private void disableNewFolderButton(Container c) {
         int len = c.getComponentCount();
         for (int i = 0; i < len; i++) {
             Component comp = c.getComponent(i);

@@ -8,12 +8,14 @@ import com.panayotis.cafeports.config.Config;
 import com.panayotis.cafeports.config.ConfigListener;
 import com.panayotis.cafeports.config.JConfiguration;
 import com.panayotis.cafeports.db.PortInfo;
+import com.panayotis.cafeports.db.PortList;
 import com.panayotis.cafeports.gui.portinfo.JPortInfo;
 import com.panayotis.cafeports.gui.table.JPortList;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ComponentEvent;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
@@ -30,7 +32,6 @@ public class JPortWindow extends JFrame {
     private final JPanel mainview;
     private final JPortList portlist;
     private final JPortInfo info;
-    private JConfiguration last_conf = null;
 
     public JPortWindow() {
         super();
@@ -70,34 +71,46 @@ public class JPortWindow extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
-    public void initTable() {
+    public void triggerDataIntialization() {
         Config.base.addListener(new ConfigListener() {
 
             public void configIsUpdated() {
+                JConfiguration.dialog.setVisible(false);
                 initTable();
             }
         });
-        if (last_conf != null) {
-            last_conf.setVisible(true);
-            last_conf.dispose();
-            last_conf = null;
-        }
-        if (!Config.isPrefixValid(Config.base.getPrefix()))
+        initialization.setWaiting();
+        initTable();
+    }
+
+    public synchronized void initTable() {
+        if (!Config.base.isPrefixValid())
             initialization.setInvalidPath();
         else
             initialization.setWaiting();
+        mainview.remove(filters);
+        mainview.remove(initialization);
+        mainview.add(initialization, BorderLayout.NORTH);
+        portlist.clearList();
+        validate();
         SwingUtilities.invokeLater(new Runnable() {
 
             public void run() {
-                if (!Config.isPrefixValid(Config.base.getPrefix())) {
-                    last_conf = new JConfiguration();
-                    last_conf.setVisible(true);
-                } else {
-                    portlist.updatePortList();
-                    mainview.remove(initialization);
-                    mainview.add(filters, BorderLayout.NORTH);
-                    validate();
-                }
+                if (!Config.base.isPrefixValid())
+                    JConfiguration.dialog.fireDisplay();
+                else
+                    try {
+                        PortList.invalidatePortLists(); // It is required in the case the configuration has changed
+                        portlist.updatePortList();
+                        mainview.remove(initialization);
+                        mainview.add(filters, BorderLayout.NORTH);
+                    } catch (Exception ex) {
+                        Config.base.setCurrentPrefixInvalid();
+                        JOptionPane.showMessageDialog(null, "Unable to initialize Macports\n" + ex.getMessage());
+                        initTable();
+                    }
+                validate();
+                repaint();
             }
         });
     }

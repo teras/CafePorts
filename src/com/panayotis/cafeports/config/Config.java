@@ -26,10 +26,16 @@ public class Config {
     static final String RECEIPTS = "receipts/";
     /* */
     private String prefix;
+    private String backup;
+    /* */
+    private boolean current_prefix_valid;
+    private boolean backup_status;
+    /* */
     private HashSet<ConfigListener> listeners;
 
     public Config() {
         prefix = DEFAULT_PREFIX_DIR;
+        current_prefix_valid = true;
         listeners = new HashSet<ConfigListener>();
     }
 
@@ -49,12 +55,27 @@ public class Config {
         return prefix;
     }
 
+    public void backup() {
+        backup = prefix;
+        backup_status = current_prefix_valid;
+    }
+
+    public void restore() {
+        prefix = backup;
+        current_prefix_valid = backup_status;
+    }
+
     public synchronized void setPrefix(String prefix) {
         if (!prefix.endsWith(File.separator))
             prefix += File.separator;
+//        if (this.prefix.equals(prefix))
+//            return;
         this.prefix = prefix;
-        for (ConfigListener listener : listeners)
-            listener.configIsUpdated();
+        current_prefix_valid = true;    // Be optimistic!
+        current_prefix_valid = isPrefixValid();
+        if (current_prefix_valid)
+            for (ConfigListener listener : listeners)
+                listener.configIsUpdated();
     }
 
     public void addListener(ConfigListener listener) {
@@ -65,7 +86,9 @@ public class Config {
         listeners.remove(listener);
     }
 
-    public static boolean isPrefixValid(String prefix) {
+    public boolean isPrefixValid() {
+        if (!current_prefix_valid)
+            return false;
         File newport = new File(prefix, BINDIR + PORTCMD);
         if (newport.exists()) {
             File newportindex = new File(prefix, VAR_MACPORTS);
@@ -73,5 +96,9 @@ public class Config {
                 return true;
         }
         return false;
+    }
+
+    public void setCurrentPrefixInvalid() {
+        current_prefix_valid = false;
     }
 }
