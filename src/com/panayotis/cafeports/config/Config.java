@@ -17,7 +17,7 @@ public class Config {
     public static Config base = new Config();
     static final String PREFIX_PREF = "PREFIX_DIR";
     /* */
-    static final String DEFAULT_PREFIX_DIR = "/opt/localy/";
+    static final String DEFAULT_PREFIX_DIR = "/opt/local/";
     static final String DEFAULT_SOURCE = "rsync.macports.org";
     /* */
     static final String VAR_MACPORTS = "var/macports/";
