@@ -4,7 +4,7 @@
  */
 package com.panayotis.cafeports.db;
 
-import com.panayotis.cafeports.config.DefaultConfig;
+import com.panayotis.cafeports.config.Config;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -29,7 +29,7 @@ public class PortParser {
     private static void readDB(PortList list) {
         BufferedReader in = null;
         try {
-            in = new BufferedReader(new FileReader(DefaultConfig.PORTINDEX));
+            in = new BufferedReader(new FileReader(Config.base.getPortIndex()));
             String line;
             while ((line = in.readLine()) != null)
                 list.add(new PortInfo(line, in.readLine()));
@@ -45,7 +45,7 @@ public class PortParser {
 
     public static void updateInstalled(PortList list) {
         HashMap<String, String> installed = new HashMap<String, String>();
-        for (File port : new File(DefaultConfig.RECEIPTS).listFiles())
+        for (File port : new File(Config.base.getReceiptsDir()).listFiles())
             if (port.isDirectory())
                 for (File vers : port.listFiles())
                     if (vers.isDirectory()) {

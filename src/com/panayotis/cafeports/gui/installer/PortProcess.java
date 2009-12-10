@@ -6,7 +6,7 @@ package com.panayotis.cafeports.gui.installer;
 
 import com.panayotis.utilities.Closure;
 import com.panayotis.utilities.Commander;
-import com.panayotis.cafeports.config.DefaultConfig;
+import com.panayotis.cafeports.config.Config;
 import com.panayotis.cafeports.db.PortInfo;
 import com.panayotis.cafeports.sudo.PipedLauncher;
 import com.panayotis.cafeports.sudo.SudoManager;
@@ -62,7 +62,7 @@ public class PortProcess {
         if (list == null || list.length < 0 || command == null)
             return;
         final String[] exe = new String[2 + list.length];
-        exe[0] = DefaultConfig.PORTCMD;
+        exe[0] = Config.base.getPortCmd();
         exe[1] = command;
         for (int i = 0; i < list.length; i++)
             exe[i + 2] = list[i].getData("name");

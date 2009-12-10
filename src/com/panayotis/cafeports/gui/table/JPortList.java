@@ -87,7 +87,6 @@ public class JPortList extends JScrollPane {
         TableColumnModel model = tbl.getColumnModel();
         TableColumn col;
         for (int i = 0; i < model.getColumnCount() - 1; i++) {    // It is IMPORTANT to leave out last column, so that it will be auto-resized
-            System.out.println(i);
             col = model.getColumn(i);
             col.setPreferredWidth(i == 0 ? PortListModel.FIRST_COLUMN_SIZE : PortListModel.PREFERRED_COLUMN_SIZE);
             col.setMinWidth(i == 0 ? PortListModel.FIRST_COLUMN_SIZE : PortListModel.MINIMUM_COLUMN_SIZE);
