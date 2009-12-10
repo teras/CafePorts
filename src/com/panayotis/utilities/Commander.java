@@ -32,6 +32,7 @@ public class Commander {
     private OutputProxy procout = null;
     private OutputProxy procerr = null;
     private int exit_value = INVALID_EXIT_VALUE;
+    private boolean output_is_terminated = true;
 
     public Commander(String[] command) {
         this.command = command;
@@ -51,7 +52,7 @@ public class Commander {
         this.finish = finish;
     }
 
-    public void exec() {
+    public synchronized void exec() {
         if (proc != null)
             throw new RuntimeException("Command already running");
         exit_value = INVALID_EXIT_VALUE;
@@ -67,6 +68,7 @@ public class Commander {
         bufferin = new BufferedWriter(new OutputStreamWriter(proc.getOutputStream()));
         procout = new OutputProxy(out, proc.getInputStream(), this);
         procerr = new OutputProxy(err, proc.getErrorStream(), this);
+        output_is_terminated = false;
         procout.worker.start();
         procerr.worker.start();
     }
@@ -118,7 +120,7 @@ public class Commander {
                 if (SYNC_WITH_STREAMS)
                     try {
                         /* do not perform this loop, if we don't want to synchronize with out/error streams */
-                        while (!waitThread.isInterrupted())
+                        while ((!output_is_terminated || waitThread.isInterrupted()))
                             Thread.sleep(2000);
                     } catch (InterruptedException ex) {
                     }
@@ -157,6 +159,7 @@ public class Commander {
         /* Do not care if no call back is defined */
         if (finish == null) {
             doInterrupt();
+            output_is_terminated = true;
             return;
         }
         /* Do not care if it is already nulled */
@@ -171,6 +174,7 @@ public class Commander {
             return;
 
         /* Kill after both streams have ended */
+        output_is_terminated = true;
         doKill();
         doWaitFor();
         finish.exec(exit_value);

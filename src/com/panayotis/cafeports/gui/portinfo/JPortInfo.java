@@ -199,7 +199,6 @@ public class JPortInfo extends javax.swing.JFrame implements MouseListener, Mous
 
     public void mouseClicked(MouseEvent e) {
         redispatchMouseEvent(e, false);
-
     }
 
     public void mousePressed(MouseEvent e) {
