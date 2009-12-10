@@ -16,6 +16,7 @@ You acknowledge that this software is not designed, licensed or intended for use
  */
 package com.panayotis.cafeports.gui.table;
 
+import com.panayotis.utilities.Closure;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -107,6 +108,8 @@ import javax.swing.table.TableModel;
  */
 public class TableSorter extends AbstractTableModel {
 
+    public JPortList hack_for_table_columns_update;
+    /* */
     protected TableModel tableModel;
     public static final int DESCENDING = -1;
     public static final int NOT_SORTED = 0;
@@ -439,8 +442,13 @@ public class TableSorter extends AbstractTableModel {
 //                status = (status + 4) % 3 - 1; // signed mod, returning {-1, 0, 1}
                     setSortingStatus(column, status);
                 }
-            } else if (e.getButton() == e.BUTTON3)
-                ((SelectableColumns) tableModel).selectVisibleColumns(e);
+            } else if (e.getButton() == MouseEvent.BUTTON3)
+                ((SelectableColumns) tableModel).selectVisibleColumns(e, new Closure() {
+
+                    public void exec(Object data) {
+                        hack_for_table_columns_update.hack_for_table_has_changed();
+                    }
+                });
         }
     }
 

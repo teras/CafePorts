@@ -6,6 +6,7 @@ package com.panayotis.cafeports.gui.table;
 
 import com.panayotis.cafeports.db.PortInfo;
 import com.panayotis.cafeports.db.PortList;
+import com.panayotis.utilities.Closure;
 import java.awt.Color;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -31,6 +32,7 @@ public class JPortList extends JScrollPane {
         super();
         tbl = new JTable();
         sorter = new TableSorter(new PortListModel(PortList.getEmptyPortList()), tbl.getTableHeader());
+        sorter.hack_for_table_columns_update = this;
         colsel = new JButton(new ImageIcon(getClass().getResource("/icons/colsel.png")));
 
         sorter.setSortingStatus(1, TableSorter.ASCENDING);
@@ -41,7 +43,12 @@ public class JPortList extends JScrollPane {
         colsel.addMouseListener(new MouseAdapter() {
 
             public void mouseClicked(MouseEvent ev) {
-                ((SelectableColumns) sorter.getTableModel()).selectVisibleColumns(ev);
+                ((SelectableColumns) sorter.getTableModel()).selectVisibleColumns(ev, new Closure() {
+
+                    public void exec(Object data) {
+                        hack_for_table_has_changed();
+                    }
+                });
             }
         });
         colsel.setEnabled(false);
@@ -67,18 +74,24 @@ public class JPortList extends JScrollPane {
         colsel.setEnabled(true);
     }
 
+    public ListSelectionModel getSelectionModel() {
+        return tbl.getSelectionModel();
+    }
+
+    public void hack_for_table_has_changed() {
+        sorter.fireTableStructureChanged();
+        updateColumnSizes();
+    }
+
     private void updateColumnSizes() {
         TableColumnModel model = tbl.getColumnModel();
         TableColumn col;
         for (int i = 0; i < model.getColumnCount() - 1; i++) {    // It is IMPORTANT to leave out last column, so that it will be auto-resized
+            System.out.println(i);
             col = model.getColumn(i);
-            col.setPreferredWidth(PortListModel.PreferredColumnSize[i]);
-            col.setMinWidth(PortListModel.MinimumColumnSize[i]);
-            col.setMaxWidth(PortListModel.MaximumColumnSize[i]);
+            col.setPreferredWidth(i == 0 ? PortListModel.FIRST_COLUMN_SIZE : PortListModel.PREFERRED_COLUMN_SIZE);
+            col.setMinWidth(i == 0 ? PortListModel.FIRST_COLUMN_SIZE : PortListModel.MINIMUM_COLUMN_SIZE);
+            col.setMaxWidth(i == 0 ? PortListModel.FIRST_COLUMN_SIZE : PortListModel.MAXIMUM_COLUMN_SIZE);
         }
-    }
-
-    public ListSelectionModel getSelectionModel() {
-        return tbl.getSelectionModel();
     }
 }

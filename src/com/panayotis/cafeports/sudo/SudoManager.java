@@ -21,7 +21,7 @@ public class SudoManager {
         System.getProperty("java.home") + "/bin/java",
         "-cp",
         System.getProperty("java.class.path"),
-        "cafeports.sudo.PipedLauncher"
+        "com.panayotis.cafeports.sudo.PipedLauncher"
     };
     private static JSudo inst;
     private static boolean sudo_is_ok;

@@ -7,7 +7,6 @@ package com.panayotis.cafeports.gui.table;
 import com.panayotis.cafeports.db.PortList;
 import com.panayotis.cafeports.gui.JSelector;
 import com.panayotis.utilities.Closure;
-import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import javax.swing.JComponent;
 import javax.swing.table.AbstractTableModel;
@@ -18,18 +17,37 @@ import javax.swing.table.AbstractTableModel;
  */
 public class PortListModel extends AbstractTableModel implements SelectableColumns {
 
-    public static final String[] Columns = {"⎈", "Name", "Version", "Installed Version", "Description"};
-    public static final String[] ColData = {"isinstalled", "name", "version", "installed_version", "description"};
-    public static final int[] PreferredColumnSize = {14, 100, 100, 100};    // Last column sould NOT be defined, or else auto-size will not be performed!
-    public static final int[] MaximumColumnSize = {14, 500, 500, 500};      // Last column sould NOT be defined, or else auto-size will not be performed!
-    public static final int[] MinimumColumnSize = {14, 10, 10, 10};         // Last column sould NOT be defined, or else auto-size will not be performed!
-    /* */
+    private static final String[] Columns = {"⎈", "Name", "Version", "Installed Version", "URL", "E-mail", "Description"};
+    private static final String[] ColData = {"isinstalled", "name", "version", "installed_version", "homepage", "maintainers", "description"};
+    public static final int FIRST_COLUMN_SIZE = 14;
+    public static final int PREFERRED_COLUMN_SIZE = 100;
+    public static final int MAXIMUM_COLUMN_SIZE = 500;
+    public static final int MINIMUM_COLUMN_SIZE = 10;
+    /* Core variables */
+    private boolean[] visible_cols = {true, true, true, false, false, false, true};
     private PortList list;
-    private boolean[] visible_cols = {true, true, true, false, true};
+    /* helper variables */
     private JSelector sel = new JSelector();
+    private int[] correspondence;
 
     public PortListModel(PortList list) {
         this.list = list;
+        calculateCorrespondences();
+    }
+
+    private final synchronized void calculateCorrespondences() {
+        int cols = 0;
+        for (int i = 0; i < visible_cols.length; i++)
+            if (visible_cols[i])
+                cols++;
+        correspondence = new int[cols];
+
+        cols = 0;
+        for (int i = 0; i < visible_cols.length; i++)
+            if (visible_cols[i]) {
+                correspondence[cols] = i;
+                cols++;
+            }
     }
 
     public int getRowCount() {
@@ -37,23 +55,27 @@ public class PortListModel extends AbstractTableModel implements SelectableColum
     }
 
     public int getColumnCount() {
-        return Columns.length;
+        return correspondence.length;
     }
 
     public String getColumnName(int columnIndex) {
-        return Columns[columnIndex];
+        return Columns[correspondence[columnIndex]];
     }
 
     public Object getValueAt(int rowIndex, int columnIndex) {
-        return list.getItem(rowIndex).getData(ColData[columnIndex]);
+        return list.getItem(rowIndex).getData(ColData[correspondence[columnIndex]]);
     }
 
-    public void selectVisibleColumns(MouseEvent event) {
-        JComponent comp = (JComponent)event.getSource();
+    public void selectVisibleColumns(MouseEvent event, final Closure call_me_back) {
+        JComponent comp = (JComponent) event.getSource();
         sel.showColumns(Columns, visible_cols, comp, event.getX(), event.getY(), new Closure() {
 
             public void exec(Object data) {
-                System.out.println(data.toString());
+                int idx = Integer.parseInt(data.toString());
+                if (idx >= 0 && idx < visible_cols.length)
+                    visible_cols[idx] = !visible_cols[idx];
+                calculateCorrespondences();
+                call_me_back.exec(null);
             }
         });
     }

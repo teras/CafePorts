@@ -4,6 +4,7 @@
  */
 package com.panayotis.cafeports.gui.table;
 
+import com.panayotis.utilities.Closure;
 import java.awt.event.MouseEvent;
 
 /**
@@ -12,5 +13,5 @@ import java.awt.event.MouseEvent;
  */
 public interface SelectableColumns {
 
-    public void selectVisibleColumns(MouseEvent event);
+    public void selectVisibleColumns(MouseEvent event, Closure call_me_back);
 }

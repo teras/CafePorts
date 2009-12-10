@@ -56,12 +56,12 @@ public class JBar extends JPanel {
         lefts.add(install);
         AbstractButton remove = initButton("Remove", "last", "r", false);
         lefts.add(remove);
-        AbstractButton update = initButton("Update", "only", "u", false);
-        lefts.add(update);
-        AbstractButton activate = initButton("Activate", "first", "a", false);
-        lefts.add(activate);
-        AbstractButton deactivate = initButton("Deactivate", "last", "d", false);
-        lefts.add(deactivate);
+//        AbstractButton update = initButton("Update", "only", "u", false);
+//        lefts.add(update);
+//        AbstractButton activate = initButton("Activate", "first", "a", false);
+//        lefts.add(activate);
+//        AbstractButton deactivate = initButton("Deactivate", "last", "d", false);
+//        lefts.add(deactivate);
 
         addMouseListener(new MouseAdapter() {
 
