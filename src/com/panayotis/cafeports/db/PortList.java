@@ -29,7 +29,7 @@ public class PortList {
         cats = null;
     }
 
-    private PortList(PortList oldlist) {
+    private PortList(PortList oldlist) throws PortListException {
         if (oldlist == null) {
             PortParser.init(this);
             Collections.sort(list);
@@ -43,7 +43,11 @@ public class PortList {
 
     private static final PortList getBasePortList() {
         if (base == null)
-            base = new PortList(null);
+            try {
+                base = new PortList(null);
+            } catch (PortListException ex) {
+                throw new RuntimeException(ex.getMessage());
+            }
         return base;
     }
 
@@ -58,11 +62,18 @@ public class PortList {
     }
 
     public static void updateBaseList() {
-        PortParser.updateInstalled(base);
+        try {
+            PortParser.updateInstalled(getBasePortList());
+        } catch (PortListException ex) {
+            throw new RuntimeException(ex.getMessage());
+        }
     }
 
     public static final void updateFilters(FilterChain chain) {
-        filtered = new PortList(getBasePortList());  // empty port list
+        try {
+            filtered = new PortList(getBasePortList()); // empty port list
+        } catch (PortListException ex) {
+        }
         boolean valid;
         for (PortInfo p : getBasePortList().getList()) {
             valid = true;

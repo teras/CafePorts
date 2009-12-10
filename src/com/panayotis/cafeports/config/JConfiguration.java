@@ -10,9 +10,12 @@
  */
 package com.panayotis.cafeports.config;
 
-import java.awt.FileDialog;
+import java.awt.Component;
+import java.awt.Container;
 import java.io.File;
+import javax.swing.JButton;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -76,21 +79,21 @@ public class JConfiguration extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void BrowseBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BrowseBActionPerformed
-        File sel = new File(PrefixT.getText()+"bin/port");
-        System.out.println(sel.getPath());
+        File sel = new File(PrefixT.getText());
         JFileChooser fc = new JFileChooser();
-        fc.setMultiSelectionEnabled(false);
         fc.setMultiSelectionEnabled(false);
         fc.setSelectedFile(sel);
         fc.ensureFileIsVisible(sel);
-        fc.showDialog(this, "Select");
-        PrefixT.setText(fc.getSelectedFile().getPath());
-//        FileDialog fd = new FileDialog(this);
-//
-//        fd.setDirectory("/opt/local/bin/port");
-//        fd.setMode(FileDialog.LOAD);
-//        fd.setVisible(true);
-
+        fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        fc.setDialogType(JFileChooser.OPEN_DIALOG);
+        disableNewFolderButton(fc);
+        int result = fc.showOpenDialog(this);
+        if (result == JFileChooser.APPROVE_OPTION)
+            if (Config.isPrefixValid(fc.getSelectedFile().getPath())) {
+                Config.base.setPrefix(fc.getSelectedFile().getPath());
+                PrefixT.setText(Config.base.getPrefix());
+            } else
+                JOptionPane.showMessageDialog(this, "Selected path is not a valid MacPorts distribution");
     }//GEN-LAST:event_BrowseBActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BrowseB;
@@ -104,8 +107,20 @@ public class JConfiguration extends javax.swing.JDialog {
         if (status)
             PrefixT.setText(Config.base.getPrefix());
         else
-            //      Config.base.setPrefix(PrefixT.getText());
             dispose();
         super.setVisible(status);
+    }
+
+    public void disableNewFolderButton(Container c) {
+        int len = c.getComponentCount();
+        for (int i = 0; i < len; i++) {
+            Component comp = c.getComponent(i);
+            if (comp instanceof JButton) {
+                JButton b = (JButton) comp;
+                if (b.getText().equals("New Folder"))
+                    b.setVisible(false);
+            } else if (comp instanceof Container)
+                disableNewFolderButton((Container) comp);
+        }
     }
 }

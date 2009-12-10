@@ -13,7 +13,7 @@ import com.apple.eawt.Application;
 public class CafePortsApp extends Application {
 
     public CafePortsApp() {
-     //   setEnabledPreferencesMenu(true);
-    //    addApplicationListener(new ApplicationHandler());
+        setEnabledPreferencesMenu(true);
+        addApplicationListener(new ApplicationHandler());
     }
 }

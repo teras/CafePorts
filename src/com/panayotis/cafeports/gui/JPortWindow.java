@@ -4,6 +4,9 @@
  */
 package com.panayotis.cafeports.gui;
 
+import com.panayotis.cafeports.config.Config;
+import com.panayotis.cafeports.config.ConfigListener;
+import com.panayotis.cafeports.config.JConfiguration;
 import com.panayotis.cafeports.db.PortInfo;
 import com.panayotis.cafeports.gui.portinfo.JPortInfo;
 import com.panayotis.cafeports.gui.table.JPortList;
@@ -12,6 +15,7 @@ import java.awt.Dimension;
 import java.awt.event.ComponentEvent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -26,6 +30,7 @@ public class JPortWindow extends JFrame {
     private final JPanel mainview;
     private final JPortList portlist;
     private final JPortInfo info;
+    private JConfiguration last_conf = null;
 
     public JPortWindow() {
         super();
@@ -66,10 +71,35 @@ public class JPortWindow extends JFrame {
     }
 
     public void initTable() {
-        portlist.updatePortList();
-        mainview.remove(initialization);
-        mainview.add(filters, BorderLayout.NORTH);
-        validate();
+        Config.base.addListener(new ConfigListener() {
+
+            public void configIsUpdated() {
+                initTable();
+            }
+        });
+        if (last_conf != null) {
+            last_conf.setVisible(true);
+            last_conf.dispose();
+            last_conf = null;
+        }
+        if (!Config.isPrefixValid(Config.base.getPrefix()))
+            initialization.setInvalidPath();
+        else
+            initialization.setWaiting();
+        SwingUtilities.invokeLater(new Runnable() {
+
+            public void run() {
+                if (!Config.isPrefixValid(Config.base.getPrefix())) {
+                    last_conf = new JConfiguration();
+                    last_conf.setVisible(true);
+                } else {
+                    portlist.updatePortList();
+                    mainview.remove(initialization);
+                    mainview.add(filters, BorderLayout.NORTH);
+                    validate();
+                }
+            }
+        });
     }
 
     public void setInfoVisible(boolean status) {

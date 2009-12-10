@@ -21,12 +21,12 @@ import java.util.Vector;
  */
 public class PortParser {
 
-    public static void init(PortList list) {
+    public static void init(PortList list) throws PortListException {
         readDB(list);
         updateInstalled(list);
     }
 
-    private static void readDB(PortList list) {
+    private static void readDB(PortList list) throws PortListException {
         BufferedReader in = null;
         try {
             in = new BufferedReader(new FileReader(Config.base.getPortIndex()));
@@ -34,7 +34,7 @@ public class PortParser {
             while ((line = in.readLine()) != null)
                 list.add(new PortInfo(line, in.readLine()));
         } catch (Exception ex) {
-            ex.printStackTrace();
+            throw new PortListException(ex.getMessage());
         } finally {
             try {
                 in.close();
@@ -43,18 +43,21 @@ public class PortParser {
         }
     }
 
-    public static void updateInstalled(PortList list) {
-        HashMap<String, String> installed = new HashMap<String, String>();
-        for (File port : new File(Config.base.getReceiptsDir()).listFiles())
-            if (port.isDirectory())
-                for (File vers : port.listFiles())
-                    if (vers.isDirectory()) {
-                        installed.put(port.getName(), vers.getName());
-                        break;
-                    }
-        for (PortInfo port : list.getList())
-            port.setInstalledVersion(installed.get(port.getData("name")));
-
+    public static void updateInstalled(PortList list) throws PortListException {
+        try {
+            HashMap<String, String> installed = new HashMap<String, String>();
+            for (File port : new File(Config.base.getReceiptsDir()).listFiles())
+                if (port.isDirectory())
+                    for (File vers : port.listFiles())
+                        if (vers.isDirectory()) {
+                            installed.put(port.getName(), vers.getName());
+                            break;
+                        }
+            for (PortInfo port : list.getList())
+                port.setInstalledVersion(installed.get(port.getData("name")));
+        } catch (Exception ex) {
+            throw new PortListException(ex.getMessage());
+        }
     }
 
     public static void getCategoryWithTag(PortList list, String tag) {

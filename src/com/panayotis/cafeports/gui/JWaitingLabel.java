@@ -15,8 +15,7 @@ import javax.swing.JLabel;
 public class JWaitingLabel extends JLabel {
 
     public JWaitingLabel() {
-        super(" Please wait... reading database");
-        setBackground(new Color(250, 200, 100));
+        super();
         setOpaque(true);
         setVerticalTextPosition(JLabel.CENTER);
     }
@@ -24,5 +23,15 @@ public class JWaitingLabel extends JLabel {
     public Dimension getPreferredSize() {
         Dimension superD = super.getPreferredSize();
         return new Dimension(superD.width, superD.height + 12);
+    }
+
+    public void setInvalidPath() {
+        setBackground(Color.red);
+        setText("  MacPorts PREFIX directory is not valid; usually \"/opt/local/\"");
+    }
+
+    public void setWaiting() {
+        setBackground(new Color(250, 200, 100));
+        setText(" Please wait... reading database");
     }
 }
