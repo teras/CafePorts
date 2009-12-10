@@ -14,12 +14,13 @@ import com.panayotis.cafeports.db.PortInfo;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Font;
+import java.awt.Point;
 import java.awt.Window;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import javax.swing.BoxLayout;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
@@ -28,7 +29,7 @@ import javax.swing.border.EmptyBorder;
  *
  * @author teras
  */
-public class JPortInfo extends javax.swing.JFrame implements MouseListener {
+public class JPortInfo extends javax.swing.JFrame implements MouseListener, MouseMotionListener {
 
     private final static int BORDEREDGE = 8;
     private final static int TEXTGAP = 4;
@@ -47,7 +48,9 @@ public class JPortInfo extends javax.swing.JFrame implements MouseListener {
     /* */
     private int dx = 5;
     private int dy = 0;
-    private boolean enable_self_movement = false;
+    private Point oldpos = new Point();
+    private Point newpos = new Point();
+    private final Component self;
 
     /** Creates new form JPortInfo */
     public JPortInfo(Window parentframe) {
@@ -55,6 +58,7 @@ public class JPortInfo extends javax.swing.JFrame implements MouseListener {
         frame = parentframe;
         url = new JClearButton();
         email = new JClearEmail();
+        self = this;
 
         JRoundEdge lower = new JRoundEdge(8, 0);
 
@@ -92,20 +96,14 @@ public class JPortInfo extends javax.swing.JFrame implements MouseListener {
         updateInfo(null);
         updateLocation();
 
-        addComponentListener(new ComponentAdapter() {
-
-            public void componentMoved(ComponentEvent ev) {
-                if (!enable_self_movement)
-                    return;
-                System.out.println("**");
-                Component c = ev.getComponent();
-                dx = c.getX() - (frame.getX() + frame.getWidth());
-                dy = c.getY() - frame.getY();
-            }
-        });
-        getGlassPane().setVisible(true);
-        getGlassPane().addMouseListener(this);
+        glassPane = getGlassPane();
+        glassPane.setVisible(true);
+        glassPane.addMouseListener(this);
+        glassPane.addMouseMotionListener(this);
+        contentPane = getContentPane();
     }
+    private Component glassPane;
+    private Container contentPane;
 
     public void updateInfo(final PortInfo info) {
         if (info == null) {
@@ -199,23 +197,56 @@ public class JPortInfo extends javax.swing.JFrame implements MouseListener {
         return valueT;
     }
 
-    public void mouseClicked(MouseEvent arg0) {
-        System.out.println("click!");
+    public void mouseClicked(MouseEvent e) {
+        redispatchMouseEvent(e, false);
+
     }
 
-    public void mousePressed(MouseEvent arg0) {
-        enable_self_movement = true;
-  //      getGlassPane().setVisible(false);
+    public void mousePressed(MouseEvent e) {
+        Component c = e.getComponent();
+        while (c.getParent() != null)
+            c = c.getParent();
+        oldpos.setLocation(e.getPoint());
+        redispatchMouseEvent(e, false);
     }
 
-    public void mouseReleased(MouseEvent arg0) {
-        enable_self_movement = false;
-   //     getGlassPane().setVisible(true);
+    public void mouseReleased(MouseEvent e) {
+        newpos.setLocation(e.getPoint());
+        dx += newpos.x - oldpos.x;
+        dy += newpos.y - oldpos.y;
+        redispatchMouseEvent(e, true);
     }
 
-    public void mouseEntered(MouseEvent arg0) {
+    public void mouseEntered(MouseEvent e) {
+        redispatchMouseEvent(e, false);
     }
 
-    public void mouseExited(MouseEvent arg0) {
+    public void mouseExited(MouseEvent e) {
+        redispatchMouseEvent(e, false);
+    }
+
+    public void mouseDragged(MouseEvent e) {
+        newpos.setLocation(e.getPoint());
+        dx += newpos.x - oldpos.x;
+        dy += newpos.y - oldpos.y;
+        redispatchMouseEvent(e, false);
+    }
+
+    public void mouseMoved(MouseEvent e) {
+        redispatchMouseEvent(e, false);
+    }
+
+    private void redispatchMouseEvent(MouseEvent e, boolean repaint) {
+        Point glassPanePoint = e.getPoint();
+        Container container = contentPane;
+        Point containerPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint, contentPane);
+
+        if (containerPoint.y >= 0) {
+            Component component = SwingUtilities.getDeepestComponentAt(container, containerPoint.x, containerPoint.y);
+            if ((component != null)) {
+                Point componentPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint, component);
+                component.dispatchEvent(new MouseEvent(component, e.getID(), e.getWhen(), e.getModifiers(), componentPoint.x, componentPoint.y, e.getClickCount(), e.isPopupTrigger()));
+            }
+        }
     }
 }
