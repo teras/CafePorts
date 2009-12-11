@@ -35,7 +35,7 @@ public class UserList extends UserData implements UpdateableUserData {
         cmb.setModel(new DefaultComboBoxModel(data));
     }
 
-    public void visualsNeedUpdating() {
+    public void requestUpdateVisuals() {
         ((JComboBox) getComponent()).setSelectedItem(getData());
     }
 }

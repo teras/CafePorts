@@ -35,7 +35,7 @@ public class UserString extends UserData {
         });
     }
 
-    public void visualsNeedUpdating() {
+    public void requestUpdateVisuals() {
         ((JTextField) getComponent()).setText(getData());
     }
 }

@@ -61,7 +61,7 @@ public class FilterFactory {
         Filter f = new Filter(p, o, container);
         if (old != null) {
             f.getUserData().setData(old.getUserData().getData());
-            f.getUserData().visualsNeedUpdating();
+            f.getUserData().requestUpdateVisuals();
         }
         return f;
     }

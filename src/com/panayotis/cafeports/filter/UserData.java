@@ -48,7 +48,7 @@ public abstract class UserData {
                 setSignature(item);
     }
 
-    public abstract void visualsNeedUpdating();
+    public abstract void requestUpdateVisuals();
 
     public boolean belongsHere(Component request) {
         return belongsHereImpl(component, request);
