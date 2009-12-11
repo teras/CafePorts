@@ -49,7 +49,8 @@ public abstract class PortData implements Nameable {
     }
 
     public String getData(PortInfo p) {
-        return p.getData(tag).toLowerCase();
+        String result = p.getData(tag);
+        return result == null ? null : result.toLowerCase();
     }
 
     public String getTag() {
