@@ -91,7 +91,6 @@ public class JPortWindow extends JFrame {
                 initTable();
             }
         });
-        initialization.setWaiting();
         initTable();
     }
 
