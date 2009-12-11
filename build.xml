@@ -5,7 +5,7 @@
     <import file="nbproject/profiler-build-impl.xml"/>
 
 
-	<property name="version" value="0.0.4"/>
+	<property name="version" value="0.0.5"/>
 
 	<taskdef name="jarbundler"
         onerror="report"
