@@ -19,7 +19,7 @@ public class Belongs extends Operation {
     }
 
     public boolean isValid(String portdata, String userdata) {
-        if (portdata == null)
+        if (portdata == null || userdata == null)
             return false;
         portdata = " " + portdata + " ";
         return portdata.indexOf(userdata) >= 0;

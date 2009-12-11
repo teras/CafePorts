@@ -19,7 +19,7 @@ public class Contains extends Operation {
     }
 
     public boolean isValid(String portdata, String userdata) {
-        if (portdata == null)
+        if (portdata == null || userdata == null)
             return false;
         return portdata.indexOf(userdata) >= 0;
     }

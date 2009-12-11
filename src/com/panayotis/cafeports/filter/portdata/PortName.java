@@ -18,10 +18,10 @@ import com.panayotis.cafeports.filter.operation.Starts;
 public class PortName extends PortData {
 
     {
-        addOperation(new Starts());
-        addOperation(new NotStarts());
         addOperation(new Contains());
         addOperation(new NotContains());
+        addOperation(new Starts());
+        addOperation(new NotStarts());
     }
 
     public PortName() {
