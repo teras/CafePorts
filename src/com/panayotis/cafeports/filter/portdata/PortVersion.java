@@ -25,6 +25,6 @@ public class PortVersion extends PortData {
     }
 
     public String getData(PortInfo p) {
-        return p.getData("version");
+        return p.getData("version").toLowerCase();
     }
 }

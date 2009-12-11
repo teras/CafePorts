@@ -30,7 +30,7 @@ public class PortCategory extends PortData implements UpdateablePortData {
     }
 
     public String getData(PortInfo p) {
-        return p.getData(getTag());
+        return p.getData(getTag()).toLowerCase();
     }
 
     public String getTag() {

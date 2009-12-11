@@ -29,6 +29,6 @@ public class PortName extends PortData {
     }
 
     public String getData(PortInfo p) {
-        return p.getData("name");
+        return p.getData("name").toLowerCase();
     }
 }

@@ -22,20 +22,16 @@ public class UserString extends UserData {
         tf.getDocument().addDocumentListener(new DocumentListener() {
 
             public void insertUpdate(DocumentEvent arg0) {
-                filterUpdated();
+                setData(((JTextField) getComponent()).getText().toLowerCase());
             }
 
             public void removeUpdate(DocumentEvent arg0) {
-                filterUpdated();
+                setData(((JTextField) getComponent()).getText().toLowerCase());
             }
 
             public void changedUpdate(DocumentEvent arg0) {
-                filterUpdated();
+                setData(((JTextField) getComponent()).getText().toLowerCase());
             }
         });
-    }
-
-    public String getData() {
-        return ((JTextField) getComponent()).getText();
     }
 }

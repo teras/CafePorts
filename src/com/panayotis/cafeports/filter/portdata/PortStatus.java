@@ -25,6 +25,6 @@ public class PortStatus extends PortData {
     }
 
     public String getData(PortInfo p) {
-        return p.getData("isinstalled");
+        return p.getData("isinstalled").toLowerCase();
     }
 }

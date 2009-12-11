@@ -18,17 +18,26 @@ public abstract class UserData {
     private static String USERDATA_SIGNATURE = "USERDATA_SIGNATURE";
     private JComponent component;
     private Filter parent;
+    private String data;
 
     public UserData(JComponent comp) {
         this.component = comp;
         setSignature(comp);
+        data = null;
     }
 
     public JComponent getComponent() {
         return component;
     }
 
-    public abstract String getData();
+    public String getData() {
+        return data;
+    }
+
+    public void setData(String data) {
+        this.data = data;
+        parent.requestUpdateUserData();
+    }
 
     private static void setSignature(Component comp) {
         comp.setName(USERDATA_SIGNATURE);
@@ -57,10 +66,6 @@ public abstract class UserData {
         if (comp == null)
             return false;
         return USERDATA_SIGNATURE.equals(comp.getName());
-    }
-
-    public void filterUpdated() {
-         parent.requestUpdateUserData();
     }
 
     void setFilter(Filter parent) {

@@ -25,13 +25,9 @@ public class UserList extends UserData implements UpdateableUserData {
         cmb.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent arg0) {
-                filterUpdated();
+                setData(((JComboBox) getComponent()).getSelectedItem().toString().toLowerCase());
             }
         });
-    }
-
-    public String getData() {
-        return ((JComboBox) getComponent()).getSelectedItem().toString();
     }
 
     public void updateData(Vector<String> data) {
