@@ -4,7 +4,6 @@
  */
 package com.panayotis.cafeports.filter.portdata;
 
-import com.panayotis.cafeports.db.PortInfo;
 import com.panayotis.cafeports.filter.PortData;
 import com.panayotis.cafeports.filter.operation.Contains;
 import com.panayotis.cafeports.filter.operation.NotContains;
@@ -21,10 +20,6 @@ public class PortVersion extends PortData {
     }
 
     public PortVersion() {
-        super("Version");
-    }
-
-    public String getData(PortInfo p) {
-        return p.getData("version").toLowerCase();
+        super("Version", "version");
     }
 }

@@ -4,7 +4,6 @@
  */
 package com.panayotis.cafeports.filter.portdata;
 
-import com.panayotis.cafeports.db.PortInfo;
 import com.panayotis.cafeports.filter.PortData;
 import com.panayotis.cafeports.filter.operation.Contains;
 import com.panayotis.cafeports.filter.operation.NotContains;
@@ -25,10 +24,6 @@ public class PortName extends PortData {
     }
 
     public PortName() {
-        super("Name");
-    }
-
-    public String getData(PortInfo p) {
-        return p.getData("name").toLowerCase();
+        super("Name", "name");
     }
 }

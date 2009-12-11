@@ -67,8 +67,8 @@ public class FilterFactory {
             this.user = oper.newUserData();
             this.user.setFilter(this);
             this.container = container;
-            if ((port instanceof UpdateablePortData) && (user instanceof UpdateableUserData)) {
-                String tag = ((UpdateablePortData) port).getTag();
+            if (user instanceof UpdateableUserData) {
+                String tag = port.getTag();
                 Vector<String> data = PortList.getFilteredPortList().getCategory(tag);
                 ((UpdateableUserData) user).updateData(data);
             }

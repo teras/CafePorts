@@ -4,9 +4,7 @@
  */
 package com.panayotis.cafeports.filter.portdata;
 
-import com.panayotis.cafeports.db.PortInfo;
 import com.panayotis.cafeports.filter.PortData;
-import com.panayotis.cafeports.filter.UpdateablePortData;
 import com.panayotis.cafeports.filter.operation.Contains;
 import com.panayotis.cafeports.filter.operation.Belongs;
 import com.panayotis.cafeports.filter.operation.NotContains;
@@ -16,7 +14,7 @@ import com.panayotis.cafeports.filter.operation.NotBelongs;
  *
  * @author teras
  */
-public class PortPlatform extends PortData implements UpdateablePortData {
+public class PortPlatform extends PortData {
 
     {
         addOperation(new Contains());
@@ -26,15 +24,6 @@ public class PortPlatform extends PortData implements UpdateablePortData {
     }
 
     public PortPlatform() {
-        super("Platform");
+        super("Platform", "platforms");
     }
-
-    public String getData(PortInfo p) {
-        return p.getData(getTag()).toLowerCase();
-    }
-
-    public String getTag() {
-        return "platforms";
-    }
-
 }

@@ -15,12 +15,14 @@ import com.panayotis.utilities.ImmutableList;
 public abstract class PortData implements Nameable {
 
     private final String name;
+    private final String tag;
     private final MutableArray<Operation> ops;
 
-    public PortData(String name) {
+    public PortData(String name, String tag) {
         if (name == null)
             throw new NullPointerException("Source name could not be null");
         this.name = name;
+        this.tag = tag;
         ops = new MutableArray<Operation>();
     }
 
@@ -46,5 +48,11 @@ public abstract class PortData implements Nameable {
         return ops;
     }
 
-    public abstract String getData(PortInfo p);
+    public String getData(PortInfo p) {
+        return p.getData(tag).toLowerCase();
+    }
+
+    public String getTag() {
+        return tag;
+    }
 }
