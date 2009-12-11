@@ -31,7 +31,7 @@ public class JPortList extends JScrollPane {
     public JPortList() {
         super();
         tbl = new JTable();
-        sorter = new TableSorter(new PortListModel(PortList.getEmptyPortList()), tbl.getTableHeader());
+        sorter = new TableSorter(new PortListModel(), tbl.getTableHeader());
         sorter.hack_for_table_columns_update = this;
         colsel = new JButton(new ImageIcon(getClass().getResource("/icons/colsel.png")));
 
@@ -69,7 +69,7 @@ public class JPortList extends JScrollPane {
     }
 
     public void updatePortList() {
-        sorter.setTableModel(new PortListModel(PortList.getFilteredPortList()));
+        sorter.setTableModel(new PortListModel(PortList.getFilteredPortList(), (PortListModel) sorter.getTableModel()));
         updateColumnSizes();
         colsel.setEnabled(true);
     }
@@ -95,6 +95,6 @@ public class JPortList extends JScrollPane {
     }
 
     public void clearList() {
-        sorter.setTableModel(new PortListModel(PortList.getEmptyPortList()));
+        sorter.setTableModel(new PortListModel());
     }
 }

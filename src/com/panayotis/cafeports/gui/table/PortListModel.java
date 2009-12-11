@@ -30,9 +30,15 @@ public class PortListModel extends AbstractTableModel implements SelectableColum
     private JSelector sel = new JSelector();
     private int[] correspondence;
 
-    public PortListModel(PortList list) {
+    public PortListModel(PortList list, PortListModel old) {
         this.list = list;
+        if (old != null)
+            System.arraycopy(old.visible_cols, 0, visible_cols, 0, visible_cols.length);
         calculateCorrespondences();
+    }
+
+    public PortListModel() {
+        this(PortList.getEmptyPortList(), null);
     }
 
     private final synchronized void calculateCorrespondences() {
