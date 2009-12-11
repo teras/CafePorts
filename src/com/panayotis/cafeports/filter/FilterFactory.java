@@ -33,11 +33,11 @@ public class FilterFactory {
         sources.add(new PortName());
         sources.add(new PortCategory());
         sources.add(new PortVersion());
-        sources.add(new PortStatus());
         sources.add(new PortDescription());
         sources.add(new PortLongDescription());
         sources.add(new PortVariant());
         sources.add(new PortPlatform());
+        sources.add(new PortStatus());
     }
 
     public ImmutableList<PortData> getSources() {
