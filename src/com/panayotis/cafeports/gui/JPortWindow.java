@@ -4,11 +4,7 @@
  */
 package com.panayotis.cafeports.gui;
 
-import com.panayotis.cafeports.config.Config;
-import com.panayotis.cafeports.config.ConfigListener;
-import com.panayotis.cafeports.config.JConfiguration;
 import com.panayotis.cafeports.db.PortInfo;
-import com.panayotis.cafeports.db.PortList;
 import com.panayotis.cafeports.gui.portinfo.JPortInfo;
 import com.panayotis.cafeports.gui.table.JPortList;
 import java.awt.BorderLayout;
@@ -16,7 +12,6 @@ import java.awt.Dimension;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
@@ -83,47 +78,35 @@ public class JPortWindow extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
-    public void triggerDataIntialization() {
-        Config.base.addListener(new ConfigListener() {
+    public void setStatus(final Status status) {
+        try {
+            SwingUtilities.invokeLater(new Runnable() {
 
-            public void configIsUpdated() {
-                JConfiguration.dialog.setVisible(false);
-                initTable();
-            }
-        });
-        initTable();
-    }
-
-    public synchronized void initTable() {
-        if (!Config.base.isPrefixValid())
-            initialization.setInvalidPath();
-        else
-            initialization.setWaiting();
-        mainview.remove(filters);
-        mainview.remove(initialization);
-        mainview.add(initialization, BorderLayout.NORTH);
-        portlist.clearList();
-        validate();
-        SwingUtilities.invokeLater(new Runnable() {
-
-            public void run() {
-                if (!Config.base.isPrefixValid())
-                    JConfiguration.dialog.fireDisplay();
-                else
-                    try {
-                        PortList.invalidatePortLists(); // It is required in the case the configuration has changed
-                        portlist.updatePortList();
-                        mainview.remove(initialization);
-                        mainview.add(filters, BorderLayout.NORTH);
-                    } catch (Exception ex) {
-                        Config.base.setCurrentPrefixInvalid();
-                        JOptionPane.showMessageDialog(null, "Unable to initialize Macports\n" + ex.getMessage());
-                        initTable();
+                public void run() {
+                    mainview.remove(filters);
+                    mainview.remove(initialization);
+                    switch (status) {
+                        case LOADING:
+                            mainview.add(initialization, BorderLayout.NORTH);
+                            initialization.setWaiting();
+                            portlist.clearList();
+                            break;
+                        case ERROR:
+                            mainview.add(initialization, BorderLayout.NORTH);
+                            initialization.setInvalidPath();
+                            portlist.clearList();
+                            break;
+                        case OK:
+                            mainview.add(filters, BorderLayout.NORTH);
+                            portlist.updatePortList();
+                            break;
                     }
-                validate();
-                repaint();
-            }
-        });
+                    validate();
+                    repaint();
+                }
+            });
+        } catch (Exception ex) {
+        }
     }
 
     public void setInfoVisible(boolean status) {
@@ -152,5 +135,10 @@ public class JPortWindow extends JFrame {
 
     public JFilters getFilters() {
         return filters;
+    }
+
+    public enum Status {
+
+        LOADING, ERROR, OK
     }
 }

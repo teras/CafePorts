@@ -8,7 +8,7 @@ package com.panayotis.cafeports.db;
  *
  * @author teras
  */
-public class PortListException extends Exception {
+public class PortListException extends RuntimeException {
 
     public PortListException(String message) {
         super(message);
