@@ -6,6 +6,7 @@
 
 
 	<property name="version" value="0.0.5"/>
+	<property name="bundlename" value="CafePorts"/>
 
 	<taskdef name="jarbundler"
         onerror="report"
@@ -18,7 +19,7 @@
             dir="dist"
             jars="dist/CafePorts.jar"
             mainclass="CafePorts"
-            name="CaféPorts"
+            name="${bundlename}"
             bundleid="com.panayotis.cafeports"
             infostring="CaféPorts ${version}"
             jvmversion="1.5+"
@@ -31,8 +32,14 @@
             <javaproperty name="apple.awt.textantialiasing" value="true"/>
         </jarbundler>
 		<exec executable="zip" dir="dist">
-			<arg line="-9r ../CafePorts-${version}.zip CaféPorts.app"/>
+			<arg line="-9r ../CafePorts-${version}.zip ${bundlename}.app"/>
 		</exec>
+	</target>
+
+	<target name="-post-clean">
+		<delete>
+            <fileset dir="." includes="*.zip"/>
+		</delete>
 	</target>
 
 </project>
