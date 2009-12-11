@@ -35,6 +35,8 @@ public abstract class UserData {
     }
 
     public void setData(String data) {
+        if (data.equals(this.data))
+            return;
         this.data = data;
         parent.requestUpdateUserData();
     }
@@ -45,6 +47,8 @@ public abstract class UserData {
             for (Component item : ((Container) comp).getComponents())
                 setSignature(item);
     }
+
+    public abstract void visualsNeedUpdating();
 
     public boolean belongsHere(Component request) {
         return belongsHereImpl(component, request);

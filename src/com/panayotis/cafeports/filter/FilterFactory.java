@@ -9,9 +9,11 @@ import com.panayotis.cafeports.db.PortList;
 import com.panayotis.cafeports.filter.portdata.PortCategory;
 import com.panayotis.cafeports.filter.portdata.PortDescription;
 import com.panayotis.cafeports.filter.portdata.PortLongDescription;
+import com.panayotis.cafeports.filter.portdata.PortMaintainer;
 import com.panayotis.cafeports.filter.portdata.PortName;
 import com.panayotis.cafeports.filter.portdata.PortPlatform;
 import com.panayotis.cafeports.filter.portdata.PortStatus;
+import com.panayotis.cafeports.filter.portdata.PortHomepage;
 import com.panayotis.cafeports.filter.portdata.PortVariant;
 import com.panayotis.cafeports.filter.portdata.PortVersion;
 import com.panayotis.cafeports.gui.JFilters;
@@ -37,6 +39,8 @@ public class FilterFactory {
         sources.add(new PortLongDescription());
         sources.add(new PortVariant());
         sources.add(new PortPlatform());
+        sources.add(new PortHomepage());
+        sources.add(new PortMaintainer());
         sources.add(new PortStatus());
     }
 
@@ -44,10 +48,22 @@ public class FilterFactory {
         return sources;
     }
 
-    public Filter getNextFilter(JFilters container) {
-        PortData p = sources.get(0);
-        Operation o = p.getOperations().getItem(0);
-        return new Filter(p, o, container);
+    public Filter getNextFilter(Filter old, JFilters container) {
+        PortData p;
+        Operation o;
+        if (old == null) {
+            p = sources.get(0);
+            o = p.getOperations().getItem(0);
+        } else {
+            p = old.getPortData();
+            o = old.getOperation();
+        }
+        Filter f = new Filter(p, o, container);
+        if (old != null) {
+            f.getUserData().setData(old.getUserData().getData());
+            f.getUserData().visualsNeedUpdating();
+        }
+        return f;
     }
 
     public Filter getFilter(PortData port, Operation oper, JFilters container) {

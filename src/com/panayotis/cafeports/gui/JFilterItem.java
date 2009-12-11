@@ -86,7 +86,7 @@ public class JFilterItem extends JPanel implements Closure {
                     opselector.showCategories((ImmutableList) filter.getPortData().getOperations(), (JButton) e.getSource(), self);
                     last_popup_is_source = false;
                 } else if (e.getActionCommand().equals("+"))
-                    container.addFilter(FilterFactory.base.getNextFilter(container), filter);
+                    container.addFilter(FilterFactory.base.getNextFilter(filter, container), filter);
                 else if (e.getActionCommand().equals("-"))
                     container.removeFilter(filter);
             }

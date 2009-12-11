@@ -16,4 +16,7 @@ public class UserEmpty extends UserData {
     public UserEmpty() {
         super(new JLabel());
     }
+
+    public void visualsNeedUpdating() {
+    }
 }

@@ -21,7 +21,7 @@ public class FilterChain {
 
     public FilterChain(JFilters container) {
         items = new MutableArray<Filter>();
-        items.add(FilterFactory.base.getNextFilter(container));
+        items.add(FilterFactory.base.getNextFilter(null, container));   // Add first filter
         selectedFilter = 0;
     }
 
