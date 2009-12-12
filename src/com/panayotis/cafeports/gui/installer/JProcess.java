@@ -99,6 +99,7 @@ public class JProcess extends javax.swing.JDialog {
         InfoP.setLayout(new java.awt.BorderLayout());
 
         InfoL.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/stages/default.png"))); // NOI18N
+        InfoL.setText("Initializing ...");
         InfoL.setIconTextGap(16);
         InfoL.setMaximumSize(new java.awt.Dimension(480, 48));
         InfoL.setMinimumSize(new java.awt.Dimension(480, 48));

@@ -66,9 +66,7 @@ public class IconFactory {
     }
 
     public static String getIconText(String line) {
-        if (line == null)
-            return "Initializing...";
-        return line.startsWith(HEADER) ? line.substring(HEADER.length()) : line;
+        return line.substring(HEADER.length());
     }
 
     static boolean shoudUpdateDisplay(String line) {
