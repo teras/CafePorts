@@ -42,6 +42,7 @@ public class PortProcess {
         final Closure begin = new Closure() {
 
             public void exec(Object commander) {
+                comm = (Commander) commander;
                 SwingUtilities.invokeLater(new Runnable() {
 
                     public void run() {
