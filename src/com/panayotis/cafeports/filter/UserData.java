@@ -23,7 +23,7 @@ public abstract class UserData {
     public UserData(JComponent comp) {
         this.component = comp;
         setSignature(comp);
-        data = null;
+        data = "";
     }
 
     public JComponent getComponent() {
