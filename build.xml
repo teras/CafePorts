@@ -40,6 +40,7 @@
 		<delete>
             <fileset dir="." includes="*.zip"/>
 		</delete>
+		<delete dir="${bundlename}.app"/>
 	</target>
 
 </project>
