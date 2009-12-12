@@ -15,6 +15,7 @@ import java.io.InputStreamReader;
  * @author teras
  */
 public class PipedLauncher {
+
     private final static String KILLSIGNAL = "KILLSIGNAL";
 
     /**
@@ -62,7 +63,7 @@ public class PipedLauncher {
     }
 
     public final static void sendKillSignal(Commander c) {
-        if (c!=null)
+        if (c != null)
             c.sendLine(KILLSIGNAL);
     }
 }
