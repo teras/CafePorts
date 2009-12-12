@@ -11,6 +11,9 @@
 package com.panayotis.cafeports.gui.installer;
 
 import com.panayotis.utilities.Closure;
+import java.util.Timer;
+import java.util.TimerTask;
+import javax.swing.JLabel;
 
 /**
  *
@@ -22,6 +25,11 @@ public class JProcess extends javax.swing.JDialog {
     private boolean exec_running = true;
     private boolean kill_request = false;
     private final Closure cancel;
+    /* */
+    private Timer totalT;
+    private long last_total_time;
+    private Timer stageT;
+    private long last_stage_time;
 
     /** Creates new form JProcess */
     public JProcess(Closure cancel) {
@@ -30,6 +38,30 @@ public class JProcess extends javax.swing.JDialog {
         ScrollArea.setVisible(false);
         this.cancel = cancel;
         pack();
+
+        last_total_time = System.currentTimeMillis();
+        last_stage_time = last_total_time;
+        totalT = new Timer();
+        totalT.schedule(new TimerTask() {
+
+            @Override
+            public void run() {
+                updateTimer(last_total_time, TotalTime);
+            }
+        }, 0, 1000);
+        stageT = new Timer();
+        stageT.schedule(new TimerTask() {
+
+            @Override
+            public void run() {
+                updateTimer(last_stage_time, StageTime);
+            }
+        }, 0, 1000);
+    }
+
+    private void updateTimer(long last_time, JLabel TimeLabel) {
+        long elapsed = Math.round((System.currentTimeMillis() - last_time) / 1000.0);
+        TimeLabel.setText(elapsed + " secs");
     }
 
     /** This method is called from within the constructor to
@@ -42,7 +74,13 @@ public class JProcess extends javax.swing.JDialog {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
+        InfoP = new javax.swing.JPanel();
         InfoL = new javax.swing.JLabel();
+        LowInfoP = new javax.swing.JPanel();
+        TTimeL = new javax.swing.JLabel();
+        TotalTime = new javax.swing.JLabel();
+        STimeL = new javax.swing.JLabel();
+        StageTime = new javax.swing.JLabel();
         LowerP = new javax.swing.JPanel();
         CloseB = new javax.swing.JButton();
         LogB = new javax.swing.JButton();
@@ -58,12 +96,30 @@ public class JProcess extends javax.swing.JDialog {
         jPanel1.setBorder(javax.swing.BorderFactory.createEmptyBorder(16, 16, 8, 16));
         jPanel1.setLayout(new java.awt.BorderLayout(0, 8));
 
+        InfoP.setLayout(new java.awt.BorderLayout());
+
         InfoL.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/stages/default.png"))); // NOI18N
         InfoL.setIconTextGap(16);
         InfoL.setMaximumSize(new java.awt.Dimension(480, 48));
         InfoL.setMinimumSize(new java.awt.Dimension(480, 48));
         InfoL.setPreferredSize(new java.awt.Dimension(480, 48));
-        jPanel1.add(InfoL, java.awt.BorderLayout.NORTH);
+        InfoP.add(InfoL, java.awt.BorderLayout.NORTH);
+
+        LowInfoP.setBorder(javax.swing.BorderFactory.createEmptyBorder(8, 0, 0, 0));
+        LowInfoP.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+
+        TTimeL.setText("Total time");
+        LowInfoP.add(TTimeL);
+        LowInfoP.add(TotalTime);
+
+        STimeL.setText("Stage time");
+        STimeL.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 24, 0, 0));
+        LowInfoP.add(STimeL);
+        LowInfoP.add(StageTime);
+
+        InfoP.add(LowInfoP, java.awt.BorderLayout.PAGE_END);
+
+        jPanel1.add(InfoP, java.awt.BorderLayout.NORTH);
 
         LowerP.setLayout(new java.awt.BorderLayout());
 
@@ -117,15 +173,22 @@ public class JProcess extends javax.swing.JDialog {
     private javax.swing.JButton CloseB;
     private javax.swing.JTextArea ErrorText;
     private javax.swing.JLabel InfoL;
+    private javax.swing.JPanel InfoP;
     private javax.swing.JButton LogB;
+    private javax.swing.JPanel LowInfoP;
     private javax.swing.JPanel LowerP;
+    private javax.swing.JLabel STimeL;
     private javax.swing.JScrollPane ScrollArea;
+    private javax.swing.JLabel StageTime;
+    private javax.swing.JLabel TTimeL;
+    private javax.swing.JLabel TotalTime;
     private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables
 
     public void updateStatus(String line) {
         InfoL.setIcon(IconFactory.getIconByLine(line));
         InfoL.setText(IconFactory.getIconText(line));
+        last_stage_time = System.currentTimeMillis();
     }
 
     void updateError(String line) {
@@ -136,6 +199,11 @@ public class JProcess extends javax.swing.JDialog {
 
     void finishExec() {
         exec_running = false;
+        totalT.cancel();
+        stageT.cancel();
+        STimeL.setVisible(false);
+        StageTime.setVisible(false);
+
         if (kill_request)
             setVisible(false);
         else {
