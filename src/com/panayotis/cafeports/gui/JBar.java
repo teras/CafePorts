@@ -56,8 +56,8 @@ public class JBar extends JPanel {
         lefts.add(install);
         AbstractButton remove = initButton("Remove", "last", "r", false);
         lefts.add(remove);
-//        AbstractButton update = initButton("Update", "only", "u", false);
-//        lefts.add(update);
+        AbstractButton update = initButton("Self update", "only", "s", false);
+        lefts.add(update);
 //        AbstractButton activate = initButton("Activate", "first", "a", false);
 //        lefts.add(activate);
 //        AbstractButton deactivate = initButton("Deactivate", "last", "d", false);
@@ -94,7 +94,7 @@ public class JBar extends JPanel {
             button = new JButton();
         button.putClientProperty("JButton.buttonType", "segmentedCapsule");
         button.putClientProperty("JButton.segmentPosition", position);
-        button.setIcon(new ImageIcon(getClass().getResource("/icons/" + label.toLowerCase() + ".png")));
+        button.setIcon(new ImageIcon(getClass().getResource("/icons/" + label.replace(" ", "").toLowerCase() + ".png")));
         button.setToolTipText(label);
         button.setFocusable(false);
         button.setActionCommand(actioncommand);
@@ -109,30 +109,39 @@ public class JBar extends JPanel {
 
     private void callAction(ActionEvent ev) {
         String basecommand = null;
+        boolean require_ports = false;
+        PortInfo[] ports = new PortInfo[0];
+
         switch (ev.getActionCommand().charAt(0)) {
             case 'i':
                 basecommand = "install";
+                require_ports = true;
                 break;
             case 'r':
                 basecommand = "uninstall";
+                require_ports = true;
                 break;
-            case 'u':
-                basecommand = "update";
+            case 's':
+                basecommand = "selfupdate";
                 break;
             case 'a':
+                require_ports = true;
                 basecommand = "activate";
                 break;
             case 'd':
+                require_ports = true;
                 basecommand = "deactivate";
                 break;
             case '?':
-                frame.setInfoVisible(((JToggleButton)ev.getSource()).isSelected());
+                frame.setInfoVisible(((JToggleButton) ev.getSource()).isSelected());
                 return;
             default:
         }
-        PortInfo[] ports = frame.getJPortList().getSelectedPorts();
-        if (ports == null || ports.length == 0)
-            return;
+        if (require_ports) {
+            ports = frame.getJPortList().getSelectedPorts();
+            if (ports == null || ports.length == 0)
+                return;
+        }
         Closure self_l = new Closure() {
 
             public void exec(Object line) {

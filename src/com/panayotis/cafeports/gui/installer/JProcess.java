@@ -186,9 +186,11 @@ public class JProcess extends javax.swing.JDialog {
     // End of variables declaration//GEN-END:variables
 
     public void updateStatus(String line) {
-        InfoL.setIcon(IconFactory.getIconByLine(line));
-        InfoL.setText(IconFactory.getIconText(line));
-        last_stage_time = System.currentTimeMillis();
+        if (IconFactory.shoudUpdateDisplay(line)) {
+            InfoL.setIcon(IconFactory.getIconByLine(line));
+            InfoL.setText(IconFactory.getIconText(line));
+            last_stage_time = System.currentTimeMillis();
+        }
     }
 
     void updateError(String line) {

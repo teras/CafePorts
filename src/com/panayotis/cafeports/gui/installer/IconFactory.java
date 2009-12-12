@@ -24,34 +24,37 @@ public class IconFactory {
     private final static HashMap<String, Icon> icons = new HashMap<String, Icon>();
 
     static {
-        map.put("dependencies", "Computing dependencies for");
-        map.put("fetching", "Fetching");
-        map.put("fattempt", "Attempting to fetch");
-        map.put("verifing", "Verifying checksum(s) for");
-        map.put("extracting", "Extracting");
-        map.put("configuring", "Configuring");
-        map.put("building", "Building");
-        map.put("staging", "Staging");
-        map.put("installing", "Installing");
-        map.put("activating", "Activating");
-        map.put("cleaning", "Cleaning");
-        map.put("patches", "Applying patches");
-        map.put("deactivating", "Deactivating");
-        map.put("uninstalling", "Uninstalling");
+        map.put("Computing dependencies for", "dependencies");
+        map.put("Fetching", "fetching");
+        map.put("Attempting to fetch", "fattempt");
+        map.put("Verifying checksum(s) for", "verifing");
+        map.put("Extracting", "extracting");
+        map.put("Configuring", "configuring");
+        map.put("Building", "building");
+        map.put("Staging", "staging");
+        map.put("Installing", "installing");
+        map.put("Activating", "activating");
+        map.put("Cleaning", "cleaning");
+        map.put("Applying patches", "patches");
+        map.put("Deactivating", "deactivating");
+        map.put("Uninstalling", "uninstalling");
+        map.put("Updating", "updating");
+        map.put("MacPorts base is", "updating");
     }
 
     public static Icon getIconByLine(String line) {
         if (line == null)
             return getIconByName(DEFAULT_ICON);
         line = getIconText(line);
-        for (String key : map.keySet())
-            if (line.startsWith(map.get(key))) {
-                Icon icon = icons.get(key);
+        for (String keyname : map.keySet())
+            if (line.startsWith(keyname)) {
+                String iconname = map.get(keyname);
+                Icon icon = icons.get(iconname);
                 if (icon == null) {
-                    icon = getIconByName(key);
+                    icon = getIconByName(iconname);
                     if (icon == null)
-                        System.out.println("Error while fetching " + key);
-                    icons.put(key, icon);
+                        System.out.println("Error while fetching " + iconname);
+                    icons.put(iconname, icon);
                 }
                 return icon;
             }
@@ -66,5 +69,9 @@ public class IconFactory {
         if (line == null)
             return "Initializing...";
         return line.startsWith(HEADER) ? line.substring(HEADER.length()) : line;
+    }
+
+    static boolean shoudUpdateDisplay(String line) {
+        return line != null && line.startsWith(HEADER);
     }
 }
