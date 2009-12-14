@@ -100,7 +100,11 @@ public class Commander {
             proc.waitFor();
         } catch (InterruptedException ex) {
         }
-        exit_value = proc.exitValue();
+        try {
+            exit_value = proc.exitValue();
+        } catch (Exception e) {
+            exit_value = 0;
+        }
         proc = null;
     }
     private Thread waitThread;
