@@ -32,36 +32,40 @@ import javax.swing.border.EmptyBorder;
 public class JBar extends JPanel {
 
     private final JPanel lefts;
+    private final JPanel rights;
     private final JPortWindow frame;
 
     public JBar(JPortWindow window) {
         lefts = new JPanel();
+        rights = new JPanel();
         this.frame = window;
-
         final Point oldpos = new Point();
         final Point newpos = new Point();
         final Component comp = this;
 
-        setLayout(new BorderLayout());
-        setBorder(new EmptyBorder(0, 4, 0, 0));
-
         lefts.setLayout(new GridLayout(1, 5));
-        add(lefts, BorderLayout.WEST);
+        rights.setLayout(new GridLayout(1, 2));
 
-        AbstractButton expand = initButton("Info", "only", "?", true);
-        add(expand, BorderLayout.EAST);
-
+        AbstractButton reload = initButton("Reload", "only", "%", false);
+        rights.add(reload);
+        AbstractButton info = initButton("Info", "only", "?", true);
+        rights.add(info);
 
         AbstractButton install = initButton("Install", "first", "i", false);
         lefts.add(install);
         AbstractButton remove = initButton("Remove", "last", "r", false);
         lefts.add(remove);
+        AbstractButton activate = initButton("Activate", "first", "a", false);
+        lefts.add(activate);
+        AbstractButton deactivate = initButton("Deactivate", "last", "d", false);
+        lefts.add(deactivate);
         AbstractButton update = initButton("Self update", "only", "s", false);
         lefts.add(update);
-//        AbstractButton activate = initButton("Activate", "first", "a", false);
-//        lefts.add(activate);
-//        AbstractButton deactivate = initButton("Deactivate", "last", "d", false);
-//        lefts.add(deactivate);
+
+        setLayout(new BorderLayout());
+        setBorder(new EmptyBorder(0, 4, 0, 0));
+        add(lefts, BorderLayout.WEST);
+        add(rights, BorderLayout.EAST);
 
         addMouseListener(new MouseAdapter() {
 

@@ -24,6 +24,8 @@ public class PortList {
     /* */
     private final MutableArray<PortInfo> list = new MutableArray<PortInfo>();
     private final HashMap<String, Vector<String>> cats;
+    private long this_last_modified;
+    private long this_last_size;
 
     private PortList() {
         cats = null;
@@ -39,6 +41,8 @@ public class PortList {
             PortParser.getCategoryWithTag(this, "platforms");
         } else
             cats = oldlist.cats;
+        this_last_modified = -1;
+        this_last_size = -1;
     }
 
     private static final PortList getBasePortList() {
@@ -107,5 +111,14 @@ public class PortList {
 
     public Vector<String> getCategory(String tag) {
         return cats.get(tag);
+    }
+
+    boolean isNotUpdated(long lastModified, long length) {
+        return (this_last_modified == lastModified && this_last_size == length);
+    }
+
+    void setUpdated(long lastModified, long length) {
+        this_last_modified = lastModified;
+        this_last_size = length;
     }
 }

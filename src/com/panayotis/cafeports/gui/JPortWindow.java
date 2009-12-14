@@ -114,7 +114,7 @@ public class JPortWindow extends JFrame {
     }
 
     public Dimension getMinimumSize() {
-        return new Dimension(320, 250);
+        return new Dimension(340, 250);
     }
 
     public void setSizeLocked() {

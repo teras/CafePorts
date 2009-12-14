@@ -26,12 +26,19 @@ public class PortParser {
     }
 
     private static void readDB(PortList list) throws PortListException {
+        File cfile = new File(Config.base.getPortIndex());
+        if (!(cfile.exists() && cfile.isFile() && cfile.canRead()))
+            throw new PortListException("File " + cfile.getPath() + " is not parsable.");
+        if (list != null && list.isNotUpdated(cfile.lastModified(), cfile.length()))
+            return;
+
         BufferedReader in = null;
         try {
             in = new BufferedReader(new FileReader(Config.base.getPortIndex()));
             String line;
             while ((line = in.readLine()) != null)
                 list.add(new PortInfo(line, in.readLine()));
+            list.setUpdated(cfile.lastModified(), cfile.length());
         } catch (Exception ex) {
             throw new PortListException(ex.getMessage());
         } finally {
