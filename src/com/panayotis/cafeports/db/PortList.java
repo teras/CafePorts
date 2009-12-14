@@ -22,8 +22,8 @@ public class PortList {
     private static PortList filtered = null;
     private static PortList empty = new PortList();
     /* */
-    private final MutableArray<PortInfo> list = new MutableArray<PortInfo>();
     private final HashMap<String, Vector<String>> cats;
+    private MutableArray<PortInfo> list = new MutableArray<PortInfo>();
     private long this_last_modified;
     private long this_last_size;
 
@@ -31,27 +31,26 @@ public class PortList {
         cats = null;
     }
 
-    private PortList(PortList oldlist) {
+    private PortList(PortList oldy, boolean updatable) {
         this_last_modified = -1;
         this_last_size = -1;
-        if (oldlist == null) {
-            PortListFactory.update(this);
-            Collections.sort(list);
-            cats = new HashMap<String, Vector<String>>();
-            PortListFactory.getCategoryWithTag(this, "variants");
-            PortListFactory.getCategoryWithTag(this, "categories");
-            PortListFactory.getCategoryWithTag(this, "platforms");
-        } else {
-            cats = oldlist.cats;
-            this_last_modified = oldlist.this_last_modified;
-            this_last_size = oldlist.this_last_size;
-        }
-    }
-
-    private static final PortList getBasePortList() {
-        if (base == null)
-            base = new PortList(null);
-        return base;
+        if (updatable) {
+            if (oldy == null)
+                oldy = this;
+            if (PortListFactory.update(oldy)) {
+                Collections.sort(oldy.list);
+                cats = new HashMap<String, Vector<String>>();
+                PortListFactory.getCategoryWithTag(this, "variants");
+                PortListFactory.getCategoryWithTag(this, "categories");
+                PortListFactory.getCategoryWithTag(this, "platforms");
+            } else {
+                list = oldy.list;
+                cats = oldy.cats;
+            }
+        } else
+            cats = oldy.cats;
+        this_last_modified = oldy.this_last_modified;
+        this_last_size = oldy.this_last_size;
     }
 
     public static final void invalidatePortLists() {
@@ -64,20 +63,18 @@ public class PortList {
     }
 
     public static final PortList getFilteredPortList() {
-        if (filtered == null)
-            filtered = getBasePortList();
         return filtered;
     }
 
-    public static void updateBaseList() {
-        filtered = null;
-        PortListFactory.update(getBasePortList());
+    public static void initBaseList() {
+        base = new PortList(base, true);
+        filtered = base;
     }
 
     public static final void updateFilters(FilterChain chain) {
-        filtered = new PortList(getBasePortList()); // empty port list
+        filtered = new PortList(base, false); // Will initialize port list, if not present
         boolean valid;
-        for (PortInfo p : getBasePortList().getList()) {
+        for (PortInfo p : base.getList()) {
             valid = true;
             for (Filter f : chain.getList())
                 if (!f.isValid(p)) {

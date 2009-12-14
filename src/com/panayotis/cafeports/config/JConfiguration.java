@@ -17,6 +17,7 @@ import java.io.File;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 /**
  *
@@ -111,8 +112,13 @@ public class JConfiguration extends javax.swing.JDialog {
     // End of variables declaration//GEN-END:variables
 
     public void fireDisplay() {
-        PrefixT.setText(Config.base.getPrefix());
-        setVisible(true);
+        SwingUtilities.invokeLater(new Runnable() {
+
+            public void run() {
+                PrefixT.setText(Config.base.getPrefix());
+                setVisible(true);
+            }
+        });
     }
 
     private void disableNewFolderButton(Container c) {

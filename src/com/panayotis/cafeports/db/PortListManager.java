@@ -16,31 +16,31 @@ import javax.swing.JOptionPane;
  */
 public class PortListManager {
 
-    private static PortListManager plv;
+    private static PortListManager manager;
 
     /* */
     private final JPortWindow window;
 
     private final static PortListManager getValidator() {
-        if (plv == null)
+        if (manager == null)
             throw new NullPointerException("PortListValidator not initialized yet!");
-        return plv;
+        return manager;
     }
 
     public final static void init(JPortWindow window) {
         if (window == null)
             throw new NullPointerException("PortListValidator window should not be null");
-        plv = new PortListManager(window);
-
+        manager = new PortListManager(window);
+        updateData();
     }
 
     public final static void forceReloadData() {
-        PortList.invalidatePortLists();
+ //       PortList.invalidatePortLists();
         updateData();
     }
 
     public synchronized static void updateData() {
-        new Thread() {
+        Thread work = new Thread() {
 
             public void run() {
                 if (!Config.base.isPrefixValid()) {
@@ -51,10 +51,8 @@ public class PortListManager {
                     getValidator().window.setStatus(JPortWindow.Status.LOADING);
 
                 try {
-                    /* The following line will load everything and set filters.
-                     * Will break here, if not right
-                     */
-                    getValidator().window.getFilters().requestListUpdate();
+                    /*  Will break here, if not right */
+                    PortList.initBaseList();
                     /* Everything OK */
                     getValidator().window.setStatus(JPortWindow.Status.OK);
                     JConfiguration.dialog.setVisible(false);
@@ -66,7 +64,8 @@ public class PortListManager {
                     return;
                 }
             }
-        }.start();
+        };
+        work.start();
     }
 
     private PortListManager(JPortWindow window) {
@@ -78,6 +77,5 @@ public class PortListManager {
                 updateData();
             }
         });
-        updateData();
     }
 }

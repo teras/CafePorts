@@ -20,17 +20,18 @@ import java.util.Vector;
  */
 public class PortListFactory {
 
-    public static void update(PortList list) throws PortListException {
-        updateBase(list);
+    public static boolean update(PortList list) throws PortListException {
+        boolean base_has_changed = updateBase(list);
         updateInstalled(list);
+        return base_has_changed;
     }
 
-    private static void updateBase(PortList list) throws PortListException {
+    private static boolean updateBase(PortList list) throws PortListException {
         File cfile = new File(Config.base.getPortIndex());
         if (!(cfile.exists() && cfile.isFile() && cfile.canRead()))
             throw new PortListException("File " + cfile.getPath() + " is not parsable.");
         if (list != null && list.isNotUpdated(cfile.lastModified(), cfile.length()))
-            return;
+            return false;
 
         BufferedReader in = null;
         try {
@@ -47,9 +48,10 @@ public class PortListFactory {
             } catch (Exception ex) {
             }
         }
+        return true;
     }
 
-    private static void updateInstalled(PortList list) throws PortListException {
+    private static boolean updateInstalled(PortList list) throws PortListException {
         try {
             HashMap<String, String> installed = new HashMap<String, String>();
             File receipts = new File(Config.base.getReceiptsDir());
@@ -67,6 +69,7 @@ public class PortListFactory {
         } catch (Exception ex) {
             throw new PortListException(ex.getMessage());
         }
+        return true;
     }
 
     public static void getCategoryWithTag(PortList list, String tag) {

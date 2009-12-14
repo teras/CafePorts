@@ -5,7 +5,6 @@
 package com.panayotis.cafeports.gui;
 
 import com.panayotis.cafeports.db.PortInfo;
-import com.panayotis.cafeports.db.PortList;
 import com.panayotis.cafeports.db.PortListManager;
 import com.panayotis.utilities.Closure;
 import com.panayotis.cafeports.gui.installer.PortProcess;
