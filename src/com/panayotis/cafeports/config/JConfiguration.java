@@ -10,6 +10,7 @@
  */
 package com.panayotis.cafeports.config;
 
+import com.panayotis.cafeports.db.PortList;
 import java.awt.Component;
 import java.awt.Container;
 import java.io.File;
@@ -91,6 +92,7 @@ public class JConfiguration extends javax.swing.JDialog {
         disableNewFolderButton(fc);
         int result = fc.showOpenDialog(this);
         if (result == JFileChooser.APPROVE_OPTION) {
+            PortList.invalidatePortLists();
             Config.base.backup();
             Config.base.setPrefix(fc.getSelectedFile().getPath());
             if (!Config.base.isPrefixValid()) {

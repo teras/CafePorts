@@ -39,9 +39,30 @@ public class PortListManager {
         updateData();
     }
 
-    public static void updateData() {
-        PortList.updateBaseList();
-        getValidator().window.setStatus(JPortWindow.Status.OK);
+    public synchronized static void updateData() {
+        new Thread() {
+
+            public void run() {
+                if (!Config.base.isPrefixValid()) {
+                    getValidator().window.setStatus(JPortWindow.Status.ERROR);
+                    JConfiguration.dialog.fireDisplay();
+                    return;
+                } else
+                    getValidator().window.setStatus(JPortWindow.Status.LOADING);
+
+                try {
+                    PortList.updateBaseList();
+                    getValidator().window.setStatus(JPortWindow.Status.OK);
+                    JConfiguration.dialog.setVisible(false);
+                } catch (PortListException ex) {
+                    getValidator().window.setStatus(JPortWindow.Status.ERROR);
+                    Config.base.setCurrentPrefixInvalid();
+                    JOptionPane.showMessageDialog(null, "Unable to initialize Macports\n" + ex.getMessage());
+                    JConfiguration.dialog.fireDisplay();
+                    return;
+                }
+            }
+        }.start();
     }
 
     private PortListManager(JPortWindow window) {
@@ -50,34 +71,9 @@ public class PortListManager {
 
             public void configIsUpdated() {
                 JConfiguration.dialog.setVisible(false);
-                loadData();
+                updateData();
             }
         });
-        loadData();
-    }
-
-    public synchronized void loadData() {
-        new Thread() {
-
-            public void run() {
-                if (!Config.base.isPrefixValid()) {
-                    window.setStatus(JPortWindow.Status.ERROR);
-                    JConfiguration.dialog.fireDisplay();
-                    return;
-                } else
-                    window.setStatus(JPortWindow.Status.LOADING);
-
-                try {
-                    updateData();
-                    JConfiguration.dialog.setVisible(false);
-                } catch (PortListException ex) {
-                    Config.base.setCurrentPrefixInvalid();
-                    window.setStatus(JPortWindow.Status.ERROR);
-                    JOptionPane.showMessageDialog(null, "Unable to initialize Macports\n" + ex.getMessage());
-                    JConfiguration.dialog.fireDisplay();
-                    return;
-                }
-            }
-        }.start();
+        updateData();
     }
 }

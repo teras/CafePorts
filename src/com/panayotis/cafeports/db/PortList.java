@@ -67,6 +67,7 @@ public class PortList {
     }
 
     public static void updateBaseList() {
+        filtered = null;
         PortParser.updateInstalled(getBasePortList());
     }
 

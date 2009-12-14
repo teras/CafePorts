@@ -52,6 +52,9 @@ public class PortParser {
     public static void updateInstalled(PortList list) throws PortListException {
         try {
             HashMap<String, String> installed = new HashMap<String, String>();
+            File receipts = new File(Config.base.getReceiptsDir());
+            if (!(receipts.exists()&&receipts.canRead()&&receipts.isDirectory()))
+                throw new PortListException("Unable to initialize "+receipts.getPath());
             for (File port : new File(Config.base.getReceiptsDir()).listFiles())
                 if (port.isDirectory())
                     for (File vers : port.listFiles())
