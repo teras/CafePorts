@@ -39,11 +39,22 @@ public class PortListFactory {
             newlist.copy(oldlist);
         else {
             BufferedReader in = null;
+            int count = 0;
+            long all_size = new File(Config.base.getPortIndex()).length();
+            long size_now = 0;
             try {
                 in = new BufferedReader(new FileReader(Config.base.getPortIndex()));
-                String line;
-                while ((line = in.readLine()) != null)
-                    newlist.add(new PortInfo(line, in.readLine()));
+                String line, line2;
+                while ((line = in.readLine()) != null) {
+                    line2 = in.readLine();
+                    size_now += line.length() + line2.length() + 2;
+                    if ((count % 100) == 0) {
+                        count = 0;
+                        listener.setPercent(((float)size_now)/all_size);
+                    }
+                    newlist.add(new PortInfo(line, line2));
+                    count++;
+                }
                 newlist.sort();
             } catch (Exception ex) {
                 throw new PortListException(ex.getMessage());
