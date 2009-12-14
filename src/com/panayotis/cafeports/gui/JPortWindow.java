@@ -92,9 +92,10 @@ public class JPortWindow extends JFrame {
                     mainview.remove(filters);
                     mainview.remove(initialization);
                     switch (status) {
-                        case LOADING:
+                        case LOADING_1:
+                        case LOADING_2:
                             mainview.add(initialization, BorderLayout.NORTH);
-                            initialization.setWaiting();
+                            initialization.setWaiting(status == Status.LOADING_2);
                             portlist.clearList();
                             bar.setEnabled(false);
                             break;
@@ -147,6 +148,6 @@ public class JPortWindow extends JFrame {
 
     public enum Status {
 
-        LOADING, ERROR, OK
+        LOADING_1, LOADING_2, ERROR, OK
     }
 }

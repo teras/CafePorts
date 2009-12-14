@@ -20,6 +20,8 @@ import java.util.Vector;
  */
 public class PortListFactory {
 
+    private static final HashMap<String, Tuplet> hashes = new HashMap<String, Tuplet>();
+
     public static boolean update(PortList newlist, PortList oldlist) throws PortListException {
         boolean base_has_changed = updateBase(newlist, oldlist);
         updateInstalled(newlist);
@@ -58,14 +60,25 @@ public class PortListFactory {
         try {
             HashMap<String, String> installed = new HashMap<String, String>();
             File receipts = new File(Config.base.getReceiptsDir());
+            File recp;
+            String name;
+            Tuplet oldtup, newtup;
+            String data;
             if (!(receipts.exists() && receipts.canRead() && receipts.isDirectory()))
                 throw new PortListException("Unable to initialize " + receipts.getPath());
+
             for (File port : new File(Config.base.getReceiptsDir()).listFiles())
                 if (port.isDirectory())
                     for (File vers : port.listFiles())
                         if (vers.isDirectory()) {
-                            installed.put(port.getName(), vers.getName());
-                            break;
+                            name = port.getName();
+                            recp = new File(vers, "receipt.bz2");
+                            if (recp.isFile() && recp.canRead()) {
+                                oldtup = hashes.get(name);
+                                newtup = new Tuplet(recp);
+                                hashes.put(name, newtup);
+                                installed.put(port.getName(), name);
+                            }
                         }
             for (PortInfo port : list.getList())
                 port.setInstalledVersion(installed.get(port.getData("name")));
@@ -89,5 +102,16 @@ public class PortListFactory {
         Vector<String> out = new Vector(set);
         Collections.sort(out);
         list.addCategory(tag, out);
+    }
+
+    private final static class Tuplet {
+
+        private long time;
+        private long size;
+
+        private Tuplet(File f) {
+            time = f.lastModified();
+            size = f.length();
+        }
     }
 }

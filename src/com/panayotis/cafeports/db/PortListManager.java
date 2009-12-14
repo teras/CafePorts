@@ -8,6 +8,8 @@ import com.panayotis.cafeports.config.Config;
 import com.panayotis.cafeports.config.ConfigListener;
 import com.panayotis.cafeports.config.JConfiguration;
 import com.panayotis.cafeports.gui.JPortWindow;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /**
@@ -35,7 +37,7 @@ public class PortListManager {
     }
 
     public final static void forceReloadData() {
- //       PortList.invalidatePortLists();
+        //       PortList.invalidatePortLists();
         updateData();
     }
 
@@ -48,7 +50,7 @@ public class PortListManager {
                     JConfiguration.dialog.fireDisplay();
                     return;
                 } else
-                    getValidator().window.setStatus(JPortWindow.Status.LOADING);
+                    getValidator().window.setStatus(JPortWindow.Status.LOADING_1);
 
                 try {
                     /*  Will break here, if not right */
