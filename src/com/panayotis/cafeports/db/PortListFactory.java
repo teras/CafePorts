@@ -43,7 +43,7 @@ public class PortListFactory {
                 ondisk = (HashMap) in.readObject();
             } catch (Exception ex) {
                 ondisk = new HashMap<String, Tuplet>();
-                System.out.println("Unable to read cache file " + CACHEHASH+": "+ex.getMessage());
+                System.out.println("Unable to read cache file " + CACHEHASH + ": " + ex.getMessage());
             } finally {
                 try {
                     in.close();
@@ -118,12 +118,12 @@ public class PortListFactory {
             long allfiles = receiptslist.length;
             long countfiles = 0;
             for (File portdir : receiptslist) {
-                if (portdir.isDirectory())
+                if (portdir.isDirectory()) {
                     /* in each 'port' directory, inside there is a list of other directories - one for each version */
+                    StringBuffer tag = new StringBuffer();
                     for (File versiondir : portdir.listFiles())
                         if (versiondir.isDirectory()) {
-                            portdirname = portdir.getName();
-                            hashname = portdirname + "/" + versiondir.getName();
+                            hashname = portdir.getName() + "/" + versiondir.getName();
                             receiptfile = new File(versiondir, "receipt.bz2");
                             /* Only if this receipt exists */
                             if (receiptfile.isFile() && receiptfile.canRead()) {
@@ -131,17 +131,23 @@ public class PortListFactory {
                                 oldtuple = hashes.get(hashname);
                                 /* file found which was not stored before! */
                                 if (!newtuple.equals(oldtuple)) {
-                                    newtuple.isActive = isActive(receiptfile);
+                                    updateTuple(newtuple, receiptfile);
                                     hashes.put(hashname, newtuple);
+                                } else {
+                                    newtuple = oldtuple;
                                 }
-                                installed.put(portdir.getName(), portdirname);
+                                tag.append(newtuple.isActive ? '1' : '0');
+                                tag.append(versiondir.getName());
+                                tag.append(":");
                             }
                         }
+                    installed.put(portdir.getName(), tag.toString());
+                }
                 countfiles++;
                 listener.setPercent(((float) countfiles) / allfiles);
             }
             for (PortInfo port : list.getList())
-                port.setInstalledVersion(installed.get(port.getData("name")));
+                port.setInstalledInfo(installed.get(port.getData("name")));
         } catch (Exception ex) {
             throw new PortListException(ex.getMessage());
         }
@@ -152,7 +158,7 @@ public class PortListFactory {
             out = new ObjectOutputStream(new FileOutputStream(cache));
             out.writeObject(hashes);
         } catch (Exception ex) {
-                System.out.println("Unable to store cache file " + CACHEHASH+": "+ex.getMessage());
+            System.out.println("Unable to store cache file " + CACHEHASH + ": " + ex.getMessage());
         } finally {
             try {
                 out.close();
@@ -178,7 +184,7 @@ public class PortListFactory {
         list.addCategory(tag, out);
     }
 
-    private static boolean isActive(File receiptfile) {
+    private static void updateTuple(Tuplet tup, File receiptfile) {
         try {
             FileInputStream fin = new FileInputStream(receiptfile);
             char b = (char) fin.read();
@@ -189,11 +195,12 @@ public class PortListFactory {
             BufferedReader in = new BufferedReader(new InputStreamReader(new CBZip2InputStream(fin)));
             String line = in.readLine();
             line = in.readLine();
-            int loc = line.startsWith("active") ? 0 : line.indexOf("active");
+            int loc = line.startsWith("active ") ? 0 : line.indexOf(" active ") + 1;
+            loc += "active ".length();
+            tup.isActive = line.charAt(loc) == '1';
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        return true;
     }
 
     private final static class Tuplet implements Serializable {

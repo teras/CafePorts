@@ -73,7 +73,7 @@ public class PortInfo implements Comparable {
         return found;
     }
 
-    public void setInstalledVersion(String vers) {
+    public void setInstalledInfo(String vers) {
         if (vers == null) {
             values.remove("isinstalled");
             values.remove("installed_version");
