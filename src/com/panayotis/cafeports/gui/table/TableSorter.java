@@ -520,8 +520,6 @@ public class TableSorter extends AbstractTableModel {
         }
 
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            if (row < 0)
-                return this;
             text.setText(value.toString());
             int modelColumn = table.convertColumnIndexToModel(column);
             icon.setIcon(getHeaderRendererIcon(modelColumn, 12));

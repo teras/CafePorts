@@ -22,37 +22,10 @@ public class PortList {
     private static PortList filtered = null;
     private static PortList empty = new PortList();
     /* */
-    private final HashMap<String, Vector<String>> cats;
+    private final HashMap<String, Vector<String>> cats = new HashMap<String, Vector<String>>();
     private final MutableArray<PortInfo> list = new MutableArray<PortInfo>();
     private long this_last_modified;
     private long this_last_size;
-
-    private PortList() {
-        cats = null;
-    }
-
-    private PortList(PortList oldy, boolean updatable) {
-        this_last_modified = -1;
-        this_last_size = -1;
-        if (updatable) {
-            if (oldy == null)
-                oldy = this;
-            if (PortListFactory.update(oldy)) {
-                Collections.sort(oldy.list);
-                cats = new HashMap<String, Vector<String>>();
-                PortListFactory.getCategoryWithTag(this, "variants");
-                PortListFactory.getCategoryWithTag(this, "categories");
-                PortListFactory.getCategoryWithTag(this, "platforms");
-            } else {
-                list.addAll(oldy.list);
-                cats = oldy.cats;
-            }
-        } else {
-            cats = oldy.cats;
-        }
-        this_last_modified = oldy.this_last_modified;
-        this_last_size = oldy.this_last_size;
-    }
 
     public static final void invalidatePortLists() {
         base = null;
@@ -87,8 +60,38 @@ public class PortList {
         }
     }
 
+    private PortList() {
+    }
+
+    private PortList(PortList oldlist, boolean updatable) {
+        this_last_modified = -1;
+        this_last_size = -1;
+        if (updatable)
+            PortListFactory.update(this, oldlist);
+        else {
+            cats.putAll(oldlist.cats);
+            this_last_modified = oldlist.this_last_modified;
+            this_last_size = oldlist.this_last_size;
+        }
+    }
+
     public void add(PortInfo portInfo) {
         list.add(portInfo);
+    }
+
+    public void copy(PortList oldlist) {
+        list.clear();
+        list.addAll(oldlist.list);
+        cats.clear();
+        cats.putAll(oldlist.cats);
+    }
+
+    public void sort() {
+        Collections.sort(list);
+        cats.clear();
+        PortListFactory.getCategoryWithTag(this, "variants");
+        PortListFactory.getCategoryWithTag(this, "categories");
+        PortListFactory.getCategoryWithTag(this, "platforms");
     }
 
     public String toString() {
@@ -116,6 +119,7 @@ public class PortList {
     }
 
     boolean isNotUpdated(long lastModified, long length) {
+//        System.out.println(this_last_modified + " - " + lastModified);
         return (this_last_modified == lastModified && this_last_size == length);
     }
 

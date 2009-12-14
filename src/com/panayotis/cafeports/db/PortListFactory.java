@@ -20,34 +20,37 @@ import java.util.Vector;
  */
 public class PortListFactory {
 
-    public static boolean update(PortList list) throws PortListException {
-        boolean base_has_changed = updateBase(list);
-        updateInstalled(list);
+    public static boolean update(PortList newlist, PortList oldlist) throws PortListException {
+        boolean base_has_changed = updateBase(newlist, oldlist);
+        updateInstalled(newlist);
         return base_has_changed;
     }
 
-    private static boolean updateBase(PortList list) throws PortListException {
+    private static boolean updateBase(PortList newlist, PortList oldlist) throws PortListException {
         File cfile = new File(Config.base.getPortIndex());
         if (!(cfile.exists() && cfile.isFile() && cfile.canRead()))
             throw new PortListException("File " + cfile.getPath() + " is not parsable.");
-        if (list != null && list.isNotUpdated(cfile.lastModified(), cfile.length()))
-            return false;
 
-        BufferedReader in = null;
-        try {
-            in = new BufferedReader(new FileReader(Config.base.getPortIndex()));
-            String line;
-            while ((line = in.readLine()) != null)
-                list.add(new PortInfo(line, in.readLine()));
-            list.setUpdated(cfile.lastModified(), cfile.length());
-        } catch (Exception ex) {
-            throw new PortListException(ex.getMessage());
-        } finally {
+        if (oldlist != null && oldlist.isNotUpdated(cfile.lastModified(), cfile.length()))
+            newlist.copy(oldlist);
+        else {
+            BufferedReader in = null;
             try {
-                in.close();
+                in = new BufferedReader(new FileReader(Config.base.getPortIndex()));
+                String line;
+                while ((line = in.readLine()) != null)
+                    newlist.add(new PortInfo(line, in.readLine()));
+                newlist.sort();
             } catch (Exception ex) {
+                throw new PortListException(ex.getMessage());
+            } finally {
+                try {
+                    in.close();
+                } catch (Exception ex) {
+                }
             }
         }
+        newlist.setUpdated(cfile.lastModified(), cfile.length());
         return true;
     }
 
