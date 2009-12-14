@@ -13,7 +13,7 @@ import java.util.StringTokenizer;
  */
 public class PortInfo implements Comparable {
 
-    public final HashMap<String, String> values;
+    private final HashMap<String, String> values;
 
     public PortInfo(String line1, String line2) {
         values = new HashMap<String, String>();

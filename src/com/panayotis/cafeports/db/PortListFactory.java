@@ -7,12 +7,15 @@ package com.panayotis.cafeports.db;
 import com.panayotis.cafeports.config.Config;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
+import java.io.InputStreamReader;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.StringTokenizer;
 import java.util.Vector;
+import org.apache.tools.bzip2.CBZip2InputStream;
 
 /**
  *
@@ -50,7 +53,7 @@ public class PortListFactory {
                     size_now += line.length() + line2.length() + 2;
                     if ((count % 100) == 0) {
                         count = 0;
-                        listener.setPercent(((float)size_now)/all_size);
+                        listener.setPercent(((float) size_now) / all_size);
                     }
                     newlist.add(new PortInfo(line, line2));
                     count++;
@@ -72,27 +75,42 @@ public class PortListFactory {
     private static boolean updateInstalled(PortList list, UpdateListener listener) throws PortListException {
         try {
             HashMap<String, String> installed = new HashMap<String, String>();
-            File receipts = new File(Config.base.getReceiptsDir());
-            File recp;
-            String name;
-            Tuplet oldtup, newtup;
-            String data;
-            if (!(receipts.exists() && receipts.canRead() && receipts.isDirectory()))
-                throw new PortListException("Unable to initialize " + receipts.getPath());
+            File allreceipts = new File(Config.base.getReceiptsDir());
+            File receiptfile;
+            String portdirname;
+            String hashname;
+            Tuplet oldtuple, newtuple;
+            if (!(allreceipts.exists() && allreceipts.canRead() && allreceipts.isDirectory()))
+                throw new PortListException("Unable to initialize " + allreceipts.getPath());
 
-            for (File port : new File(Config.base.getReceiptsDir()).listFiles())
-                if (port.isDirectory())
-                    for (File vers : port.listFiles())
-                        if (vers.isDirectory()) {
-                            name = port.getName();
-                            recp = new File(vers, "receipt.bz2");
-                            if (recp.isFile() && recp.canRead()) {
-                                oldtup = hashes.get(name);
-                                newtup = new Tuplet(recp);
-                                hashes.put(name, newtup);
-                                installed.put(port.getName(), name);
+            /* Check all files in receipts */
+            File receiptsdir = new File(Config.base.getReceiptsDir());
+            File[] receiptslist = receiptsdir.listFiles();
+            long allfiles = receiptslist.length;
+            long countfiles = 0;
+            for (File portdir : receiptslist) {
+                if (portdir.isDirectory())
+                    /* in each 'port' directory, inside there is a list of other directories - one for each version */
+                    for (File versiondir : portdir.listFiles())
+                        if (versiondir.isDirectory()) {
+                            portdirname = portdir.getName();
+                            hashname = portdirname + "/" + versiondir.getName();
+                            receiptfile = new File(versiondir, "receipt.bz2");
+                            /* Only if this receipt exists */
+                            if (receiptfile.isFile() && receiptfile.canRead()) {
+                                newtuple = new Tuplet(receiptfile);
+                                oldtuple = hashes.get(hashname);
+                                /* file found which was not stored before! */
+                                if (!newtuple.equals(oldtuple))
+                                    hashes.put(hashname, newtuple);
+                                System.out.print(hashname + ": ");
+                                boolean b = isActive(receiptfile);
+                                installed.put(portdir.getName(), portdirname);
                             }
                         }
+                countfiles++;
+                listener.setPercent(((float) countfiles) / allfiles);
+            }
             for (PortInfo port : list.getList())
                 port.setInstalledVersion(installed.get(port.getData("name")));
         } catch (Exception ex) {
@@ -117,6 +135,25 @@ public class PortListFactory {
         list.addCategory(tag, out);
     }
 
+    private static boolean isActive(File receiptfile) {
+        try {
+            FileInputStream fin = new FileInputStream(receiptfile);
+            char b = (char) fin.read();
+            char z = (char) fin.read();
+            if (b != 'B' && z != 'Z')
+                fin.reset();
+
+            BufferedReader in = new BufferedReader(new InputStreamReader(new CBZip2InputStream(fin)));
+            String line = in.readLine();
+            line = in.readLine();
+            int loc = line.startsWith("active") ? 0 : line.indexOf("active");
+            System.out.println(" - " + loc);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return true;
+    }
+
     private final static class Tuplet {
 
         private long time;
@@ -125,6 +162,12 @@ public class PortListFactory {
         private Tuplet(File f) {
             time = f.lastModified();
             size = f.length();
+        }
+
+        public boolean equals(Tuplet other) {
+            if (other == null)
+                return false;
+            return other.time == time && other.size == size;
         }
     }
 }
