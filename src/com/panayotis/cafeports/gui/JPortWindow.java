@@ -5,6 +5,7 @@
 package com.panayotis.cafeports.gui;
 
 import com.panayotis.cafeports.db.PortInfo;
+import com.panayotis.cafeports.db.UpdateListener;
 import com.panayotis.cafeports.gui.portinfo.JPortInfo;
 import com.panayotis.cafeports.gui.table.JPortList;
 import java.awt.BorderLayout;
@@ -140,6 +141,10 @@ public class JPortWindow extends JFrame {
 
     public JFilters getFilters() {
         return filters;
+    }
+
+    public UpdateListener getUpdateListener() {
+        return initialization;
     }
 
     public enum Status {

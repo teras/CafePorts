@@ -40,13 +40,13 @@ public class PortList {
         return filtered;
     }
 
-    public static void initBaseList() {
-        base = new PortList(base, true);
+    public static void initBaseList(UpdateListener listener) {
+        base = new PortList(base, true, listener);
         filtered = base;
     }
 
     public static final void updateFilters(FilterChain chain) {
-        filtered = new PortList(base, false); // Will initialize port list, if not present
+        filtered = new PortList(base, false, null); // Will initialize port list, if not present
         boolean valid;
         for (PortInfo p : base.getList()) {
             valid = true;
@@ -63,11 +63,11 @@ public class PortList {
     private PortList() {
     }
 
-    private PortList(PortList oldlist, boolean updatable) {
+    private PortList(PortList oldlist, boolean updatable, UpdateListener listener) {
         this_last_modified = -1;
         this_last_size = -1;
         if (updatable)
-            PortListFactory.update(this, oldlist);
+            PortListFactory.update(this, oldlist, listener);
         else {
             cats.putAll(oldlist.cats);
             this_last_modified = oldlist.this_last_modified;

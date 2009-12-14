@@ -52,7 +52,7 @@ public class PortListManager {
 
                 try {
                     /*  Will break here, if not right */
-                    PortList.initBaseList();
+                    PortList.initBaseList(getValidator().window.getUpdateListener());
                     /* Everything OK */
                     getValidator().window.setStatus(JPortWindow.Status.OK);
                     JConfiguration.fireHide();

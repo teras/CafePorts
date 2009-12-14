@@ -4,6 +4,7 @@
  */
 package com.panayotis.cafeports.gui;
 
+import com.panayotis.cafeports.db.UpdateListener;
 import java.awt.Color;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -14,10 +15,12 @@ import javax.swing.border.EmptyBorder;
  *
  * @author teras
  */
-public class JWaitingLabel extends JLabel {
+public class JWaitingLabel extends JLabel implements UpdateListener {
 
-    private static Icon stage1 = new ImageIcon(JWaitingLabel.class.getResource("/icons/stage1.png"));
-    private static Icon stage2 = new ImageIcon(JWaitingLabel.class.getResource("/icons/stage2.png"));
+    private static Icon[] stages = {
+        new ImageIcon(JWaitingLabel.class.getResource("/icons/stage1.png")),
+        new ImageIcon(JWaitingLabel.class.getResource("/icons/stage2.png"))
+    };
 
     public JWaitingLabel() {
         super();
@@ -36,6 +39,13 @@ public class JWaitingLabel extends JLabel {
     public void setWaiting(boolean stage) {
         setBackground(new Color(250, 200, 100));
         setText("Please wait... reading database");
-        setIcon(stage ? stage2 : stage1);
+    }
+
+    public void setStage(int stage) {
+        setIcon(stages[stage]);
+    }
+
+    public void setPercent(float percent) {
+        System.out.println(percent);
     }
 }

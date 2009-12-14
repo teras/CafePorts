@@ -22,13 +22,15 @@ public class PortListFactory {
 
     private static final HashMap<String, Tuplet> hashes = new HashMap<String, Tuplet>();
 
-    public static boolean update(PortList newlist, PortList oldlist) throws PortListException {
-        boolean base_has_changed = updateBase(newlist, oldlist);
-        updateInstalled(newlist);
+    public static boolean update(PortList newlist, PortList oldlist, UpdateListener listener) throws PortListException {
+        listener.setStage(0);
+        boolean base_has_changed = updateBase(newlist, oldlist, listener);
+        listener.setStage(1);
+        updateInstalled(newlist, listener);
         return base_has_changed;
     }
 
-    private static boolean updateBase(PortList newlist, PortList oldlist) throws PortListException {
+    private static boolean updateBase(PortList newlist, PortList oldlist, UpdateListener listener) throws PortListException {
         File cfile = new File(Config.base.getPortIndex());
         if (!(cfile.exists() && cfile.isFile() && cfile.canRead()))
             throw new PortListException("File " + cfile.getPath() + " is not parsable.");
@@ -56,7 +58,7 @@ public class PortListFactory {
         return true;
     }
 
-    private static boolean updateInstalled(PortList list) throws PortListException {
+    private static boolean updateInstalled(PortList list, UpdateListener listener) throws PortListException {
         try {
             HashMap<String, String> installed = new HashMap<String, String>();
             File receipts = new File(Config.base.getReceiptsDir());
