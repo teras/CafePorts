@@ -86,7 +86,7 @@ public class JPortWindow extends JFrame {
         }
 
         try {
-            SwingUtilities.invokeLater(new Runnable() {
+            SwingUtilities.invokeAndWait(new Runnable() {
 
                 public void run() {
                     mainview.remove(filters);
