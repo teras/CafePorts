@@ -32,17 +32,20 @@ public class PortList {
     }
 
     private PortList(PortList oldlist) {
-        if (oldlist == null) {
-            PortParser.init(this);
-            Collections.sort(list);
-            cats = new HashMap<String, Vector<String>>();
-            PortParser.getCategoryWithTag(this, "variants");
-            PortParser.getCategoryWithTag(this, "categories");
-            PortParser.getCategoryWithTag(this, "platforms");
-        } else
-            cats = oldlist.cats;
         this_last_modified = -1;
         this_last_size = -1;
+        if (oldlist == null) {
+            PortListFactory.update(this);
+            Collections.sort(list);
+            cats = new HashMap<String, Vector<String>>();
+            PortListFactory.getCategoryWithTag(this, "variants");
+            PortListFactory.getCategoryWithTag(this, "categories");
+            PortListFactory.getCategoryWithTag(this, "platforms");
+        } else {
+            cats = oldlist.cats;
+            this_last_modified = oldlist.this_last_modified;
+            this_last_size = oldlist.this_last_size;
+        }
     }
 
     private static final PortList getBasePortList() {
@@ -68,7 +71,7 @@ public class PortList {
 
     public static void updateBaseList() {
         filtered = null;
-        PortParser.updateInstalled(getBasePortList());
+        PortListFactory.update(getBasePortList());
     }
 
     public static final void updateFilters(FilterChain chain) {

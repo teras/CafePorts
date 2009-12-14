@@ -51,7 +51,11 @@ public class PortListManager {
                     getValidator().window.setStatus(JPortWindow.Status.LOADING);
 
                 try {
-                    PortList.updateBaseList();
+                    /* The following line will load everything and set filters.
+                     * Will break here, if not right
+                     */
+                    getValidator().window.getFilters().requestListUpdate();
+                    /* Everything OK */
                     getValidator().window.setStatus(JPortWindow.Status.OK);
                     JConfiguration.dialog.setVisible(false);
                 } catch (PortListException ex) {

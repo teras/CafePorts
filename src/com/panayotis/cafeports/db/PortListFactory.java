@@ -18,14 +18,14 @@ import java.util.Vector;
  *
  * @author teras
  */
-public class PortParser {
+public class PortListFactory {
 
-    public static void init(PortList list) throws PortListException {
-        readDB(list);
+    public static void update(PortList list) throws PortListException {
+        updateBase(list);
         updateInstalled(list);
     }
 
-    private static void readDB(PortList list) throws PortListException {
+    private static void updateBase(PortList list) throws PortListException {
         File cfile = new File(Config.base.getPortIndex());
         if (!(cfile.exists() && cfile.isFile() && cfile.canRead()))
             throw new PortListException("File " + cfile.getPath() + " is not parsable.");
@@ -49,12 +49,12 @@ public class PortParser {
         }
     }
 
-    public static void updateInstalled(PortList list) throws PortListException {
+    private static void updateInstalled(PortList list) throws PortListException {
         try {
             HashMap<String, String> installed = new HashMap<String, String>();
             File receipts = new File(Config.base.getReceiptsDir());
-            if (!(receipts.exists()&&receipts.canRead()&&receipts.isDirectory()))
-                throw new PortListException("Unable to initialize "+receipts.getPath());
+            if (!(receipts.exists() && receipts.canRead() && receipts.isDirectory()))
+                throw new PortListException("Unable to initialize " + receipts.getPath());
             for (File port : new File(Config.base.getReceiptsDir()).listFiles())
                 if (port.isDirectory())
                     for (File vers : port.listFiles())
