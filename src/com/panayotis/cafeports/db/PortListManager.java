@@ -35,7 +35,7 @@ public class PortListManager {
     }
 
     public final static void forceReloadData() {
-        //       PortList.invalidatePortLists();
+        PortList.invalidatePortLists();
         updateData();
     }
 

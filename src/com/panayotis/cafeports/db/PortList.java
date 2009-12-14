@@ -30,6 +30,7 @@ public class PortList {
     public static final void invalidatePortLists() {
         base = null;
         filtered = null;
+        PortListFactory.killCache();
     }
 
     public static final PortList getEmptyPortList() {

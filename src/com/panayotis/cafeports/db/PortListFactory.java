@@ -106,7 +106,6 @@ public class PortListFactory {
             HashMap<String, String> installed = new HashMap<String, String>();
             File allreceipts = new File(Config.base.getReceiptsDir());
             File receiptfile;
-            String portdirname;
             String hashname;
             Tuplet oldtuple, newtuple;
             if (!(allreceipts.exists() && allreceipts.canRead() && allreceipts.isDirectory()))
@@ -133,12 +132,14 @@ public class PortListFactory {
                                 if (!newtuple.equals(oldtuple)) {
                                     updateTuple(newtuple, receiptfile);
                                     hashes.put(hashname, newtuple);
-                                } else {
+                                } else
                                     newtuple = oldtuple;
-                                }
-                                tag.append(newtuple.isActive ? '✔' : '=');
-                                tag.append(versiondir.getName());
-                                tag.append(":");
+
+                                String data = (newtuple.isActive ? '✔' : '=') + versiondir.getName() + ":";
+                                if (newtuple.isActive)
+                                    tag.insert(0, data);
+                                else
+                                    tag.append(data);
                             }
                         }
                     installed.put(portdir.getName(), tag.toString());
@@ -201,6 +202,11 @@ public class PortListFactory {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+    }
+
+    static void killCache() {
+        cache.delete();
+        hashes.clear();
     }
 
     private final static class Tuplet implements Serializable {

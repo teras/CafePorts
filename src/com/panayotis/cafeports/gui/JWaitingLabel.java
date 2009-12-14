@@ -27,6 +27,8 @@ public class JWaitingLabel extends JPanel implements UpdateListener {
         new ImageIcon(JWaitingLabel.class.getResource("/icons/stage1.png")),
         new ImageIcon(JWaitingLabel.class.getResource("/icons/stage2.png"))
     };
+    private static final Color WaitingColor = new Color(234, 196, 32);
+    private static final Color ErrorColor = new Color(250, 50, 70);
 
     public JWaitingLabel() {
         super();
@@ -48,7 +50,7 @@ public class JWaitingLabel extends JPanel implements UpdateListener {
     }
 
     public void setInvalidPath() {
-        setBackground(Color.red);
+        setBackground(ErrorColor);
         text.setText("MacPorts PREFIX directory is not valid; usually \"/opt/local/\"");
         text.setIcon(null);
         progress.setVisible(false);
@@ -56,7 +58,7 @@ public class JWaitingLabel extends JPanel implements UpdateListener {
     }
 
     public void setWaiting(boolean stage) {
-        setBackground(new Color(250, 200, 100));
+        setBackground(WaitingColor);
         text.setText("Please wait... reading database");
         doLayout();
     }
