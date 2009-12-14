@@ -29,10 +29,7 @@ public class Config {
     static final String RECEIPTS = "receipts/";
     /* */
     private String prefix;
-    private String backup;
-    /* */
     private boolean current_prefix_valid;
-    private boolean backup_status;
     /* */
     private HashSet<ConfigListener> listeners;
     /* */
@@ -59,16 +56,6 @@ public class Config {
 
     public String getPrefix() {
         return prefix;
-    }
-
-    public void backup() {
-        backup = prefix;
-        backup_status = current_prefix_valid;
-    }
-
-    public void restore() {
-        prefix = backup;
-        current_prefix_valid = backup_status;
     }
 
     public synchronized void setPrefix(String prefix) {

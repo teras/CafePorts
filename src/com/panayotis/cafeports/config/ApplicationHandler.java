@@ -20,7 +20,7 @@ public class ApplicationHandler extends ApplicationAdapter {
     }
 
     public void handlePreferences(ApplicationEvent event) {
-        JConfiguration.dialog.fireDisplay();
+        JConfiguration.fireDisplay(false);
     }
 
     public void handleQuit(ApplicationEvent event) {

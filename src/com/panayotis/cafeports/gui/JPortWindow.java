@@ -79,12 +79,6 @@ public class JPortWindow extends JFrame {
     }
 
     public void setStatus(final Status status) {
-        /* This should not be called in the event thread */
-        if (status == Status.OK) {
-            filters.requestListUpdate();
-            portlist.updatePortList();
-        }
-
         try {
             SwingUtilities.invokeAndWait(new Runnable() {
 
@@ -106,6 +100,8 @@ public class JPortWindow extends JFrame {
                             bar.setEnabled(false);
                             break;
                         case OK:
+                            filters.requestListUpdate();
+                            portlist.updatePortList();
                             mainview.add(filters, BorderLayout.NORTH);
                             bar.setEnabled(true);
                             break;

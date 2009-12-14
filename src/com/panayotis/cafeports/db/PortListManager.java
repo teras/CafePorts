@@ -8,8 +8,6 @@ import com.panayotis.cafeports.config.Config;
 import com.panayotis.cafeports.config.ConfigListener;
 import com.panayotis.cafeports.config.JConfiguration;
 import com.panayotis.cafeports.gui.JPortWindow;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /**
@@ -47,7 +45,7 @@ public class PortListManager {
             public void run() {
                 if (!Config.base.isPrefixValid()) {
                     getValidator().window.setStatus(JPortWindow.Status.ERROR);
-                    JConfiguration.dialog.fireDisplay();
+                    JConfiguration.fireDisplay(true);
                     return;
                 } else
                     getValidator().window.setStatus(JPortWindow.Status.LOADING_1);
@@ -57,12 +55,12 @@ public class PortListManager {
                     PortList.initBaseList();
                     /* Everything OK */
                     getValidator().window.setStatus(JPortWindow.Status.OK);
-                    JConfiguration.dialog.setVisible(false);
+                    JConfiguration.fireHide();
                 } catch (PortListException ex) {
                     getValidator().window.setStatus(JPortWindow.Status.ERROR);
                     Config.base.setCurrentPrefixInvalid();
                     JOptionPane.showMessageDialog(null, "Unable to initialize Macports\n" + ex.getMessage());
-                    JConfiguration.dialog.fireDisplay();
+                    JConfiguration.fireDisplay(true);
                     return;
                 }
             }
@@ -75,7 +73,6 @@ public class PortListManager {
         Config.base.addListener(new ConfigListener() {
 
             public void configIsUpdated() {
-                JConfiguration.dialog.setVisible(false);
                 updateData();
             }
         });
