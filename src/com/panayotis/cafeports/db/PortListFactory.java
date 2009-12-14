@@ -8,8 +8,12 @@ import com.panayotis.cafeports.config.Config;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -23,7 +27,32 @@ import org.apache.tools.bzip2.CBZip2InputStream;
  */
 public class PortListFactory {
 
-    private static final HashMap<String, Tuplet> hashes = new HashMap<String, Tuplet>();
+    private static final String CACHEHASH;
+    private static final File cache;
+    private static final HashMap<String, Tuplet> hashes;
+
+    static {
+        CACHEHASH = System.getProperty("user.home") + File.separator + "Library" + File.separator + "Application Support" + File.separator + "CafePorts" + File.separator + "installation.cache";
+        cache = new File(CACHEHASH);
+        HashMap<String, Tuplet> ondisk = new HashMap<String, Tuplet>();
+
+        if (cache.isFile() && cache.canRead()) {
+            ObjectInputStream in = null;
+            try {
+                in = new ObjectInputStream(new FileInputStream(cache));
+                ondisk = (HashMap) in.readObject();
+            } catch (Exception ex) {
+                ondisk = new HashMap<String, Tuplet>();
+                System.out.println("Unable to read cache file " + CACHEHASH+": "+ex.getMessage());
+            } finally {
+                try {
+                    in.close();
+                } catch (Exception ex) {
+                }
+            }
+        }
+        hashes = ondisk;
+    }
 
     public static boolean update(PortList newlist, PortList oldlist, UpdateListener listener) throws PortListException {
         listener.setStage(0);
@@ -101,10 +130,10 @@ public class PortListFactory {
                                 newtuple = new Tuplet(receiptfile);
                                 oldtuple = hashes.get(hashname);
                                 /* file found which was not stored before! */
-                                if (!newtuple.equals(oldtuple))
+                                if (!newtuple.equals(oldtuple)) {
+                                    newtuple.isActive = isActive(receiptfile);
                                     hashes.put(hashname, newtuple);
-                                System.out.print(hashname + ": ");
-                                boolean b = isActive(receiptfile);
+                                }
                                 installed.put(portdir.getName(), portdirname);
                             }
                         }
@@ -115,6 +144,20 @@ public class PortListFactory {
                 port.setInstalledVersion(installed.get(port.getData("name")));
         } catch (Exception ex) {
             throw new PortListException(ex.getMessage());
+        }
+
+        ObjectOutputStream out = null;
+        try {
+            cache.getParentFile().mkdirs();
+            out = new ObjectOutputStream(new FileOutputStream(cache));
+            out.writeObject(hashes);
+        } catch (Exception ex) {
+                System.out.println("Unable to store cache file " + CACHEHASH+": "+ex.getMessage());
+        } finally {
+            try {
+                out.close();
+            } catch (Exception ex) {
+            }
         }
         return true;
     }
@@ -147,17 +190,17 @@ public class PortListFactory {
             String line = in.readLine();
             line = in.readLine();
             int loc = line.startsWith("active") ? 0 : line.indexOf("active");
-            System.out.println(" - " + loc);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
         return true;
     }
 
-    private final static class Tuplet {
+    private final static class Tuplet implements Serializable {
 
         private long time;
         private long size;
+        private boolean isActive;
 
         private Tuplet(File f) {
             time = f.lastModified();
