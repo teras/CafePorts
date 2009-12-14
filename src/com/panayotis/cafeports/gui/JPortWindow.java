@@ -28,6 +28,7 @@ public class JPortWindow extends JFrame {
     private final JPanel mainview;
     private final JPortList portlist;
     private final JPortInfo info;
+    private final JBar bar;
 
     public JPortWindow() {
         super();
@@ -38,11 +39,10 @@ public class JPortWindow extends JFrame {
         mainview = new JPanel(new BorderLayout());
         portlist = new JPortList();
         info = new JPortInfo(this);
+        bar = new JBar(this);
 
         mainview.add(initialization, BorderLayout.NORTH);
         mainview.add(portlist, BorderLayout.CENTER);
-
-        JBar bar = new JBar(this);
 
         JPanel viewport = new JPanel(new BorderLayout());
         viewport.add(mainview, BorderLayout.CENTER);
@@ -90,15 +90,18 @@ public class JPortWindow extends JFrame {
                             mainview.add(initialization, BorderLayout.NORTH);
                             initialization.setWaiting();
                             portlist.clearList();
+                            bar.setEnabled(false);
                             break;
                         case ERROR:
                             mainview.add(initialization, BorderLayout.NORTH);
                             initialization.setInvalidPath();
                             portlist.clearList();
+                            bar.setEnabled(false);
                             break;
                         case OK:
                             mainview.add(filters, BorderLayout.NORTH);
                             portlist.updatePortList();
+                            bar.setEnabled(true);
                             break;
                     }
                     validate();

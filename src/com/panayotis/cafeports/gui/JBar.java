@@ -6,6 +6,7 @@ package com.panayotis.cafeports.gui;
 
 import com.panayotis.cafeports.db.PortInfo;
 import com.panayotis.cafeports.db.PortList;
+import com.panayotis.cafeports.db.PortListValidator;
 import com.panayotis.utilities.Closure;
 import com.panayotis.cafeports.gui.installer.PortProcess;
 import java.awt.BorderLayout;
@@ -31,36 +32,44 @@ import javax.swing.border.EmptyBorder;
  */
 public class JBar extends JPanel {
 
-    private final JPanel lefts;
-    private final JPanel rights;
     private final JPortWindow frame;
+    private final AbstractButton install;
+    private final AbstractButton remove;
+    private final AbstractButton update;
+    private final AbstractButton activate;
+    private final AbstractButton deactivate;
+    private final AbstractButton selfupdate;
+    private final AbstractButton reload;
+    private final AbstractButton info;
 
     public JBar(JPortWindow window) {
-        lefts = new JPanel();
-        rights = new JPanel();
         this.frame = window;
+        final Component comp = this;
         final Point oldpos = new Point();
         final Point newpos = new Point();
-        final Component comp = this;
+        final JPanel lefts = new JPanel();
+        final JPanel rights = new JPanel();
 
         lefts.setLayout(new GridLayout(1, 5));
         rights.setLayout(new GridLayout(1, 2));
 
-        AbstractButton reload = initButton("Reload", "only", "%", false);
+        reload = initButton("Reload", "only", "%", false);
         rights.add(reload);
-        AbstractButton info = initButton("Info", "only", "?", true);
+        info = initButton("Info", "only", "?", true);
         rights.add(info);
 
-        AbstractButton install = initButton("Install", "first", "i", false);
+        install = initButton("Install", "first", "i", false);
         lefts.add(install);
-        AbstractButton remove = initButton("Remove", "last", "r", false);
+        remove = initButton("Remove", "last", "r", false);
         lefts.add(remove);
-        AbstractButton activate = initButton("Activate", "first", "a", false);
-        lefts.add(activate);
-        AbstractButton deactivate = initButton("Deactivate", "last", "d", false);
-        lefts.add(deactivate);
-        AbstractButton update = initButton("Self update", "only", "s", false);
+        update = initButton(("Update"), "first", "u", false);
         lefts.add(update);
+        activate = initButton("Activate", "middle", "a", false);
+        lefts.add(activate);
+        deactivate = initButton("Deactivate", "last", "d", false);
+        lefts.add(deactivate);
+        selfupdate = initButton("Self update", "only", "s", false);
+        lefts.add(selfupdate);
 
         setLayout(new BorderLayout());
         setBorder(new EmptyBorder(0, 4, 0, 0));
@@ -88,6 +97,19 @@ public class JBar extends JPanel {
                 frame.setLocation(newpos.x - oldpos.x, newpos.y - oldpos.y);
             }
         });
+        setEnabled(false);
+    }
+
+    public void setEnabled(boolean status) {
+        super.setEnabled(status);
+        install.setEnabled(status);
+        remove.setEnabled(status);
+        update.setEnabled(status);
+        activate.setEnabled(status);
+        deactivate.setEnabled(status);
+        selfupdate.setEnabled(status);
+        reload.setEnabled(status);
+        info.setEnabled(status);
     }
 
     private final AbstractButton initButton(String label, String position, String actioncommand, boolean toggle) {
@@ -135,6 +157,9 @@ public class JBar extends JPanel {
             case 'd':
                 require_ports = true;
                 basecommand = "deactivate";
+                break;
+            case '%':
+                PortListValidator.reloadData();
                 break;
             case '?':
                 frame.setInfoVisible(((JToggleButton) ev.getSource()).isSelected());
