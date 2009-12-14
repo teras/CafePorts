@@ -20,6 +20,7 @@ import javax.swing.border.EmptyBorder;
  */
 public class JWaitingLabel extends JPanel implements UpdateListener {
 
+    private final static int MAXRESOLUTION = 1000;
     private final JLabel text;
     private final JProgressBar progress;
     private static Icon[] stages = {
@@ -37,11 +38,11 @@ public class JWaitingLabel extends JPanel implements UpdateListener {
         text.setIconTextGap(8);
 
         progress.setMinimum(0);
-        progress.setMaximum(100);
+        progress.setMaximum(MAXRESOLUTION);
 
         setOpaque(true);
         setBorder(new EmptyBorder(6, 12, 6, 20));
-        setLayout(new BorderLayout(20,0));
+        setLayout(new BorderLayout(20, 0));
         add(text, BorderLayout.WEST);
         add(progress, BorderLayout.CENTER);
     }
@@ -67,6 +68,6 @@ public class JWaitingLabel extends JPanel implements UpdateListener {
 
     public void setPercent(float percent) {
         progress.setVisible(true);
-        progress.setValue((int) (100 * percent));
+        progress.setValue((int) (MAXRESOLUTION * percent));
     }
 }
