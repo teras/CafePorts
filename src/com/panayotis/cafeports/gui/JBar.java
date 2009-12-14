@@ -104,8 +104,8 @@ public class JBar extends JPanel {
         install.setEnabled(status);
         remove.setEnabled(status);
         update.setEnabled(false);
-        activate.setEnabled(false);
-        deactivate.setEnabled(false);
+        activate.setEnabled(status);
+        deactivate.setEnabled(status);
         selfupdate.setEnabled(status);
         reload.setEnabled(status);
         info.setEnabled(status);

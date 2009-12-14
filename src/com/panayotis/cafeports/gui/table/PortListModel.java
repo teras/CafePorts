@@ -19,7 +19,7 @@ public class PortListModel extends AbstractTableModel implements SelectableColum
 
     private static final String[] Columns = {"⎈", "Name", "Version", "Installed Version", "Home page", "Maintainers", "Description"};
     private static final String[] ColData = {"isinstalled", "name", "version", "installed_version", "homepage", "maintainers", "description"};
-    public static final int FIRST_COLUMN_SIZE = 14;
+    public static final int FIRST_COLUMN_SIZE = 16;
     public static final int PREFERRED_COLUMN_SIZE = 100;
     public static final int MAXIMUM_COLUMN_SIZE = 500;
     public static final int MINIMUM_COLUMN_SIZE = 10;

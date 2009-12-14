@@ -136,7 +136,7 @@ public class PortListFactory {
                                 } else {
                                     newtuple = oldtuple;
                                 }
-                                tag.append(newtuple.isActive ? '1' : '0');
+                                tag.append(newtuple.isActive ? '✔' : '=');
                                 tag.append(versiondir.getName());
                                 tag.append(":");
                             }

@@ -78,7 +78,7 @@ public class PortInfo implements Comparable {
             values.remove("isinstalled");
             values.remove("installed_version");
         } else {
-            values.put("isinstalled", "✔");
+            values.put("isinstalled", vers.indexOf("✔") >= 0 ? "✔" : "◼");
             values.put("installed_version", vers);
         }
     }
