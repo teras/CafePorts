@@ -6,7 +6,7 @@ package com.panayotis.cafeports.gui;
 
 import com.panayotis.cafeports.db.PortInfo;
 import com.panayotis.cafeports.db.PortList;
-import com.panayotis.cafeports.db.PortListValidator;
+import com.panayotis.cafeports.db.PortListManager;
 import com.panayotis.utilities.Closure;
 import com.panayotis.cafeports.gui.installer.PortProcess;
 import java.awt.BorderLayout;
@@ -159,7 +159,7 @@ public class JBar extends JPanel {
                 basecommand = "deactivate";
                 break;
             case '%':
-                PortListValidator.forceReloadData();
+                PortListManager.forceReloadData();
                 break;
             case '?':
                 frame.setInfoVisible(((JToggleButton) ev.getSource()).isSelected());
@@ -174,7 +174,7 @@ public class JBar extends JPanel {
         Closure self_l = new Closure() {
 
             public void exec(Object line) {
-                PortListValidator.updateData();
+                PortListManager.updateData();
             }
         };
         PortProcess.exec(basecommand, ports, self_l);

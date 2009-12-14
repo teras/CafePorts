@@ -4,7 +4,7 @@
  */
 
 import com.panayotis.cafeports.config.CafePortsApp;
-import com.panayotis.cafeports.db.PortListValidator;
+import com.panayotis.cafeports.db.PortListManager;
 import com.panayotis.cafeports.gui.JPortWindow;
 
 /**
@@ -17,6 +17,6 @@ public class CafePorts {
         new CafePortsApp();
         JPortWindow window = new JPortWindow();
         window.setVisible(true);
-        PortListValidator.init(window);
+        PortListManager.init(window);
     }
 }

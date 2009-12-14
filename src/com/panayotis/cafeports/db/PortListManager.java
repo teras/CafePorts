@@ -14,14 +14,14 @@ import javax.swing.JOptionPane;
  *
  * @author teras
  */
-public class PortListValidator {
+public class PortListManager {
 
-    private static PortListValidator plv;
+    private static PortListManager plv;
 
     /* */
     private final JPortWindow window;
 
-    private final static PortListValidator getValidator() {
+    private final static PortListManager getValidator() {
         if (plv == null)
             throw new NullPointerException("PortListValidator not initialized yet!");
         return plv;
@@ -30,7 +30,7 @@ public class PortListValidator {
     public final static void init(JPortWindow window) {
         if (window == null)
             throw new NullPointerException("PortListValidator window should not be null");
-        plv = new PortListValidator(window);
+        plv = new PortListManager(window);
 
     }
 
@@ -44,7 +44,7 @@ public class PortListValidator {
         getValidator().window.setStatus(JPortWindow.Status.OK);
     }
 
-    private PortListValidator(JPortWindow window) {
+    private PortListManager(JPortWindow window) {
         this.window = window;
         Config.base.addListener(new ConfigListener() {
 
