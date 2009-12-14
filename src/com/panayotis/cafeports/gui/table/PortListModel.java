@@ -70,9 +70,8 @@ public class PortListModel extends AbstractTableModel implements SelectableColum
 
     public Object getValueAt(int rowIndex, int columnIndex) {
         String val = list.getItem(rowIndex).getData(ColData[correspondence[columnIndex]]);
-        if (correspondence[columnIndex]==3) {
+        if (correspondence[columnIndex] == 3 && val != null)
             val = val.substring(1, val.indexOf(":"));
-        }
         return val;
     }
 
