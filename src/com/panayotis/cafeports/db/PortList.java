@@ -23,7 +23,7 @@ public class PortList {
     private static PortList empty = new PortList();
     /* */
     private final HashMap<String, Vector<String>> cats;
-    private MutableArray<PortInfo> list = new MutableArray<PortInfo>();
+    private final MutableArray<PortInfo> list = new MutableArray<PortInfo>();
     private long this_last_modified;
     private long this_last_size;
 
@@ -44,11 +44,12 @@ public class PortList {
                 PortListFactory.getCategoryWithTag(this, "categories");
                 PortListFactory.getCategoryWithTag(this, "platforms");
             } else {
-                list = oldy.list;
+                list.addAll(oldy.list);
                 cats = oldy.cats;
             }
-        } else
+        } else {
             cats = oldy.cats;
+        }
         this_last_modified = oldy.this_last_modified;
         this_last_size = oldy.this_last_size;
     }
