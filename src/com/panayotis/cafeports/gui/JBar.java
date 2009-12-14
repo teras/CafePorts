@@ -159,7 +159,7 @@ public class JBar extends JPanel {
                 basecommand = "deactivate";
                 break;
             case '%':
-                PortListValidator.reloadData();
+                PortListValidator.forceReloadData();
                 break;
             case '?':
                 frame.setInfoVisible(((JToggleButton) ev.getSource()).isSelected());
@@ -174,8 +174,7 @@ public class JBar extends JPanel {
         Closure self_l = new Closure() {
 
             public void exec(Object line) {
-                PortList.updateBaseList();
-                frame.getFilters().requestListUpdate();
+                PortListValidator.updateData();
             }
         };
         PortProcess.exec(basecommand, ports, self_l);

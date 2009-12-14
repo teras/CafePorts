@@ -34,9 +34,14 @@ public class PortListValidator {
 
     }
 
-    public final static void reloadData() {
+    public final static void forceReloadData() {
         PortList.invalidatePortLists();
-        getValidator().loadData();
+        updateData();
+    }
+
+    public static void updateData() {
+        PortList.updateBaseList();
+        getValidator().window.setStatus(JPortWindow.Status.OK);
     }
 
     private PortListValidator(JPortWindow window) {
@@ -63,7 +68,8 @@ public class PortListValidator {
                     window.setStatus(JPortWindow.Status.LOADING);
 
                 try {
-                    PortList.getFilteredPortList();
+                    updateData();
+                    JConfiguration.dialog.setVisible(false);
                 } catch (PortListException ex) {
                     Config.base.setCurrentPrefixInvalid();
                     window.setStatus(JPortWindow.Status.ERROR);
@@ -71,9 +77,6 @@ public class PortListValidator {
                     JConfiguration.dialog.fireDisplay();
                     return;
                 }
-
-                JConfiguration.dialog.setVisible(false);
-                window.setStatus(JPortWindow.Status.OK);
             }
         }.start();
     }

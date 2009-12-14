@@ -102,6 +102,7 @@ public class JPortWindow extends JFrame {
                             mainview.add(filters, BorderLayout.NORTH);
                             portlist.updatePortList();
                             bar.setEnabled(true);
+                            getFilters().requestListUpdate();
                             break;
                     }
                     validate();
