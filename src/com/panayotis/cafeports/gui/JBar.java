@@ -59,7 +59,7 @@ public class JBar extends JPanel implements ActionListener {
         lefts.add(activate);
         deactivate = initButton("Deactivate", LAST, "d", false);
         lefts.add(deactivate);
-        selfupdate = initButton("Self update", ONLY, "s", false);
+        selfupdate = initButton("Selfupdate", ONLY, "s", false);
         lefts.add(selfupdate);
 
         drag.register(this);

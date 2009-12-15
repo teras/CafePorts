@@ -42,10 +42,10 @@ class JShadowLabel extends JLabel {
         boolean hasFoucs = window != null && window.isFocused();
         if (enableEmphasis)
             retVal = emphasisColor;
-        else if (hasFoucs)
+        else //if (hasFoucs)
             retVal = focusedColor;
-        else
-            retVal = unfocusedColor;
+//        else
+//            retVal = unfocusedColor;
 
         return retVal;
     }

@@ -38,6 +38,7 @@ public class JToolButton extends JPanel {
         label.setHorizontalAlignment(JLabel.CENTER);
         label.setLabelFor(button);
         label.setFont(label.getFont().deriveFont(11f));
+        label.setBorder(new EmptyBorder(0, 2, 0, 2));
 
         button.setFocusable(false);
 
