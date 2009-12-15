@@ -61,7 +61,7 @@ public class JBar extends JPanel {
         lefts.add(install);
         remove = initButton("Remove", "last", "r", false);
         lefts.add(remove);
-        update = initButton(("Update"), "first", "u", false);
+        update = initButton(("Upgrade"), "first", "u", false);
         lefts.add(update);
         activate = initButton("Activate", "middle", "a", false);
         lefts.add(activate);
@@ -103,7 +103,7 @@ public class JBar extends JPanel {
         super.setEnabled(status);
         install.setEnabled(status);
         remove.setEnabled(status);
-        update.setEnabled(false);
+        update.setEnabled(status);
         activate.setEnabled(status);
         deactivate.setEnabled(status);
         selfupdate.setEnabled(status);
@@ -146,8 +146,9 @@ public class JBar extends JPanel {
                 basecommand = "uninstall";
                 require_ports = true;
                 break;
-            case 's':
-                basecommand = "selfupdate";
+            case 'u':
+                basecommand = "upgrade";
+                require_ports = true;
                 break;
             case 'a':
                 require_ports = true;
@@ -156,6 +157,9 @@ public class JBar extends JPanel {
             case 'd':
                 require_ports = true;
                 basecommand = "deactivate";
+                break;
+            case 's':
+                basecommand = "selfupdate";
                 break;
             case '%':
                 PortListManager.forceReloadData();
