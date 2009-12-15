@@ -4,98 +4,69 @@
  */
 package com.panayotis.cafeports.gui;
 
+import static com.panayotis.cafeports.gui.JToolButton.Location.*;
+
 import com.panayotis.cafeports.db.PortInfo;
 import com.panayotis.cafeports.db.PortListManager;
 import com.panayotis.utilities.Closure;
 import com.panayotis.cafeports.gui.installer.PortProcess;
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.GridLayout;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
-import javax.swing.AbstractButton;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
-import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
 /**
  *
  * @author teras
  */
-public class JBar extends JPanel {
+public class JBar extends JPanel implements ActionListener {
 
     private final JPortWindow frame;
-    private final AbstractButton install;
-    private final AbstractButton remove;
-    private final AbstractButton update;
-    private final AbstractButton activate;
-    private final AbstractButton deactivate;
-    private final AbstractButton selfupdate;
-    private final AbstractButton reload;
-    private final AbstractButton info;
+    private final JToolButton install;
+    private final JToolButton remove;
+    private final JToolButton update;
+    private final JToolButton activate;
+    private final JToolButton deactivate;
+    private final JToolButton selfupdate;
+    private final JToolButton reload;
+    private final JToolButton info;
+    private final UnifiedDragListener drag;
 
     public JBar(JPortWindow window) {
         this.frame = window;
-        final Component comp = this;
-        final Point oldpos = new Point();
-        final Point newpos = new Point();
+        drag = new UnifiedDragListener(frame);
         final JPanel lefts = new JPanel();
         final JPanel rights = new JPanel();
 
         lefts.setLayout(new GridLayout(1, 5));
         rights.setLayout(new GridLayout(1, 2));
 
-        reload = initButton("Reload", "only", "%", false);
+        reload = initButton("Reload", ONLY, "%", false);
         rights.add(reload);
-        info = initButton("Info", "only", "?", true);
+        info = initButton("Info", ONLY, "?", true);
         rights.add(info);
 
-        install = initButton("Install", "first", "i", false);
+        install = initButton("Install", FIRST, "i", false);
         lefts.add(install);
-        remove = initButton("Remove", "last", "r", false);
+        remove = initButton("Remove", LAST, "r", false);
         lefts.add(remove);
-        update = initButton(("Upgrade"), "first", "u", false);
+        update = initButton(("Upgrade"), FIRST, "u", false);
         lefts.add(update);
-        activate = initButton("Activate", "middle", "a", false);
+        activate = initButton("Activate", MIDDLE, "a", false);
         lefts.add(activate);
-        deactivate = initButton("Deactivate", "last", "d", false);
+        deactivate = initButton("Deactivate", LAST, "d", false);
         lefts.add(deactivate);
-        selfupdate = initButton("Self update", "only", "s", false);
+        selfupdate = initButton("Self update", ONLY, "s", false);
         lefts.add(selfupdate);
 
+        drag.register(this);
         setLayout(new BorderLayout());
         setBorder(new EmptyBorder(0, 4, 0, 0));
         add(lefts, BorderLayout.WEST);
         add(rights, BorderLayout.EAST);
-
-        addMouseListener(new MouseAdapter() {
-
-            public void mousePressed(MouseEvent e) {
-                Component c = e.getComponent();
-                while (c.getParent() != null)
-                    c = c.getParent();
-                oldpos.setLocation(e.getPoint());
-                SwingUtilities.convertPointToScreen(oldpos, comp);
-                oldpos.x -= frame.getX();
-                oldpos.y -= frame.getY();
-            }
-        });
-
-        addMouseMotionListener(new MouseMotionAdapter() {
-
-            public void mouseDragged(MouseEvent e) {
-                newpos.setLocation(e.getPoint());
-                SwingUtilities.convertPointToScreen(newpos, comp);
-                frame.setLocation(newpos.x - oldpos.x, newpos.y - oldpos.y);
-            }
-        });
         setEnabled(false);
     }
 
@@ -111,28 +82,19 @@ public class JBar extends JPanel {
         info.setEnabled(status);
     }
 
-    private final AbstractButton initButton(String label, String position, String actioncommand, boolean toggle) {
-        AbstractButton button;
-        if (toggle)
-            button = new JToggleButton();
-        else
-            button = new JButton();
-        button.putClientProperty("JButton.buttonType", "segmentedCapsule");
-        button.putClientProperty("JButton.segmentPosition", position);
-        button.setIcon(new ImageIcon(getClass().getResource("/icons/" + label.replace(" ", "").toLowerCase() + ".png")));
+    private final JToolButton initButton(String label, JToolButton.Location position, String actioncommand, boolean toggle) {
+        JToolButton button = new JToolButton(toggle);
+        button.setCapsulePosition(position);
+        button.setLabel(label);
         button.setToolTipText(label);
         button.setFocusable(false);
         button.setActionCommand(actioncommand);
-        button.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent ev) {
-                callAction(ev);
-            }
-        });
+        button.addActionListener(this);
+      //  drag.register(button);
         return button;
     }
 
-    private void callAction(ActionEvent ev) {
+    public void actionPerformed(ActionEvent ev) {
         String basecommand = null;
         boolean require_ports = false;
         PortInfo[] ports = new PortInfo[0];
