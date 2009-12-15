@@ -4,6 +4,7 @@
  */
 package com.panayotis.cafeports.gui;
 
+import com.panayotis.cafeports.gui.listeners.UnifiedDragListener;
 import static com.panayotis.cafeports.gui.JToolButton.Location.*;
 
 import com.panayotis.cafeports.db.PortInfo;
@@ -90,7 +91,6 @@ public class JBar extends JPanel implements ActionListener {
         button.setFocusable(false);
         button.setActionCommand(actioncommand);
         button.addActionListener(this);
-      //  drag.register(button);
         return button;
     }
 

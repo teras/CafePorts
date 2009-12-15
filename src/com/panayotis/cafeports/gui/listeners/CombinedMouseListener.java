@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.panayotis.cafeports.gui;
+package com.panayotis.cafeports.gui.listeners;
 
 import java.awt.Component;
 import java.awt.Container;
