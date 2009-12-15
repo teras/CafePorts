@@ -85,7 +85,6 @@ public class JBar extends JPanel implements ActionListener {
 
     private final JToolButton initButton(String label, JToolButton.Location position, String actioncommand, boolean toggle) {
         JToolButton button = new JToolButton(toggle);
-        button.setCapsulePosition(position);
         button.setLabel(label);
         button.setToolTipText(label);
         button.setFocusable(false);

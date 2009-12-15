@@ -34,11 +34,6 @@ public class JToolButton extends JPanel {
         button.setFocusable(false);
     }
 
-    public void setCapsulePosition(Location loc) {
-        button.putClientProperty("JButton.buttonType", "segmentedCapsule");
-        button.putClientProperty("JButton.segmentPosition", loc.name().toLowerCase());
-    }
-
     public void setToolTipText(String tip) {
         super.setToolTipText(tip);
         button.setToolTipText(tip);
