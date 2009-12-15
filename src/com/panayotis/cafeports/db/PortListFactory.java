@@ -135,7 +135,7 @@ public class PortListFactory {
                                 } else
                                     newtuple = oldtuple;
 
-                                String data = (newtuple.isActive ? '✔' : '=') + versiondir.getName() + ":";
+                                String data = (newtuple.isActive ? '✔' : '=') + newtuple.version + ":";
                                 if (newtuple.isActive)
                                     tag.insert(0, data);
                                 else
@@ -196,13 +196,18 @@ public class PortListFactory {
             BufferedReader in = new BufferedReader(new InputStreamReader(new CBZip2InputStream(fin)));
             String line = in.readLine();
             line = in.readLine();
-            int loc = line.startsWith("active ") ? 0 : line.indexOf(" active ") + 1;
-            loc += "active ".length();
+
+            int loc = line.startsWith("active ") ? 0 : line.indexOf(" active ") + ACTIVESIZE;
             tup.isActive = line.charAt(loc) == '1';
+
+            loc = line.startsWith("version") ? 0 : line.indexOf(" version ") + VERSIONSIZE;
+            tup.version = line.substring(loc, line.indexOf(" ", loc + 1));
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
+    private static final int ACTIVESIZE = 8;
+    private static final int VERSIONSIZE = 9;
 
     static void killCache() {
         cache.delete();
@@ -214,6 +219,7 @@ public class PortListFactory {
         private long time;
         private long size;
         private boolean isActive;
+        private String version;
 
         private Tuplet(File f) {
             time = f.lastModified();

@@ -27,6 +27,7 @@
             version="${version}"
             icon="resources/macosx/cafeports.icns"
             shortname="CaféPorts"
+			vmoptions="-Xms128m -Xmx256m"
         >
             <javaproperty name="apple.awt.antialiasing" value="true"/>
             <javaproperty name="apple.awt.textantialiasing" value="true"/>

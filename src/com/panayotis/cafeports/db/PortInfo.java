@@ -75,11 +75,13 @@ public class PortInfo implements Comparable {
 
     public void setInstalledInfo(String vers) {
         if (vers == null) {
-            values.remove("isinstalled");
+            values.remove("installflags");
             values.remove("installed_version");
         } else {
-            values.put("isinstalled", vers.indexOf("✔") >= 0 ? "✔" : "◼");
-            values.put("installed_version", vers);
+            String version = vers.substring(1, vers.indexOf(":"));
+            String installflags = (vers.charAt(0) == '✔' ? "✔" : "◼") + (version.equals(getData("version")) ? "=" : ">");
+            values.put("installflags", installflags);
+            values.put("installed_version", version);
         }
     }
 

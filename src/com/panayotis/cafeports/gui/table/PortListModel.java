@@ -18,7 +18,7 @@ import javax.swing.table.AbstractTableModel;
 public class PortListModel extends AbstractTableModel implements SelectableColumns {
 
     private static final String[] Columns = {"⎈", "Name", "Version", "Installed Version", "Home page", "Maintainers", "Description"};
-    private static final String[] ColData = {"isinstalled", "name", "version", "installed_version", "homepage", "maintainers", "description"};
+    private static final String[] ColData = {"installflags", "name", "version", "installed_version", "homepage", "maintainers", "description"};
     public static final int FIRST_COLUMN_SIZE = 16;
     public static final int PREFERRED_COLUMN_SIZE = 100;
     public static final int MAXIMUM_COLUMN_SIZE = 500;
@@ -70,8 +70,9 @@ public class PortListModel extends AbstractTableModel implements SelectableColum
 
     public Object getValueAt(int rowIndex, int columnIndex) {
         String val = list.getItem(rowIndex).getData(ColData[correspondence[columnIndex]]);
-        if (correspondence[columnIndex] == 3 && val != null)
-            val = val.substring(1, val.indexOf(":"));
+        if (val != null)
+            if (correspondence[columnIndex] == 0)
+                val = String.valueOf(val.charAt(0));
         return val;
     }
 
