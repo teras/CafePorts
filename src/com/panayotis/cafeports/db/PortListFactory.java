@@ -186,14 +186,16 @@ public class PortListFactory {
     }
 
     private static void updateTuple(Tuplet tup, File receiptfile) {
+        FileInputStream fin = null;
+        BufferedReader in = null;
         try {
-            FileInputStream fin = new FileInputStream(receiptfile);
+            fin = new FileInputStream(receiptfile);
             char b = (char) fin.read();
             char z = (char) fin.read();
             if (b != 'B' && z != 'Z')
                 fin.reset();
 
-            BufferedReader in = new BufferedReader(new InputStreamReader(new CBZip2InputStream(fin)));
+            in = new BufferedReader(new InputStreamReader(new CBZip2InputStream(fin)));
             String line = in.readLine();
             line = in.readLine();
 
@@ -204,6 +206,15 @@ public class PortListFactory {
             tup.version = line.substring(loc, line.indexOf(" ", loc + 1));
         } catch (Exception ex) {
             ex.printStackTrace();
+        } finally {
+            try {
+                fin.close();
+            } catch (Exception ex) {
+            }
+            try {
+                in.close();
+            } catch (Exception ex) {
+            }
         }
     }
     private static final int ACTIVESIZE = 8;
