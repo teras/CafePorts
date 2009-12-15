@@ -23,8 +23,10 @@ public class JToolButton extends JPanel {
     private final AbstractButton button;
     /* */
     private Label lType = Label.BOTH;
+    private boolean smallicon = false;
     private String lText = "";
-    private Icon lIcon = null;
+    private Icon lIcon_s = null;
+    private Icon lIcon_l = null;
 
     public JToolButton(boolean isToggle) {
         button = isToggle ? new JToggleButton() : new JButton();
@@ -54,12 +56,19 @@ public class JToolButton extends JPanel {
 
     public void setLabel(String label) {
         lText = label;
-        lIcon = new ImageIcon(getClass().getResource("/icons/" + label.replace(" ", "").toLowerCase() + ".png"));
+        lIcon_s = new ImageIcon(getClass().getResource("/icons/" + label.replace(" ", "").toLowerCase() + "_s.png"));
+        lIcon_l = new ImageIcon(getClass().getResource("/icons/" + label.replace(" ", "").toLowerCase() + "_l.png"));
+        resetLabels();
+    }
+
+    public void setIconSize(boolean small) {
+        smallicon = small;
         resetLabels();
     }
 
     public void setLabelType(Label l) {
         lType = l;
+        resetLabels();
     }
 
     public void setEnabled(boolean status) {
@@ -70,7 +79,7 @@ public class JToolButton extends JPanel {
     private void resetLabels() {
         switch (lType) {
             case ICON:
-                button.setIcon(lIcon);
+                button.setIcon(smallicon ? lIcon_s : lIcon_l);
                 button.setText(null);
                 break;
             case TEXT:
@@ -78,12 +87,10 @@ public class JToolButton extends JPanel {
                 button.setText(lText);
                 break;
             case BOTH:
-                button.setIcon(lIcon);
+                button.setIcon(smallicon ? lIcon_s : lIcon_l);
                 button.setText(lText);
                 break;
         }
-        if (getParent() != null)
-            getParent().doLayout();
     }
 
     public enum Location {
@@ -93,6 +100,6 @@ public class JToolButton extends JPanel {
 
     public enum Label {
 
-        ICON, TEXT, BOTH
+        BOTH, ICON, TEXT
     };
 }

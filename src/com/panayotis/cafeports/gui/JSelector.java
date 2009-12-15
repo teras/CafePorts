@@ -13,17 +13,50 @@ import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import javax.swing.JSeparator;
 
 /**
  *
  * @author teras
  */
-public class JSelector {
-
-    private JPopupMenu selector = new JPopupMenu();
+public class JSelector extends JPopupMenu {
 
     public void showCategories(ImmutableList<Nameable> operations, JComponent comp, final Closure listener) {
-        selector.removeAll();
+        setItems(operations, listener);
+        show(comp, comp.getBorder().getBorderInsets(comp).left / 2, comp.getHeight() - comp.getBorder().getBorderInsets(comp).bottom + 1);
+    }
+
+    public void showColumns(String[] values, boolean[] selected, JComponent comp, int x, int y, final Closure listener) {
+        setItems(values, selected, 1, listener);
+        show(comp, x, y);
+    }
+
+    public void setItems(String[] values, boolean[] selected, int offset, final Closure listener) {
+        removeAll();
+        for (int i = 0; i < values.length; i++) {
+            String val = values[i];
+            JComponent item;
+            if (val == null) {
+                item = new JSeparator();
+            } else {
+                JCheckBoxMenuItem itemc = new JCheckBoxMenuItem(values[i]);
+                itemc.setActionCommand(Integer.toString(i));
+                itemc.setState(selected[i]);
+                itemc.addActionListener(new ActionListener() {
+
+                    public void actionPerformed(ActionEvent e) {
+                        if (listener != null)
+                            listener.exec(e.getActionCommand());
+                    }
+                });
+                item = itemc;
+            }
+            add(item);
+        }
+    }
+
+    public void setItems(ImmutableList<Nameable> operations, final Closure listener) {
+        removeAll();
         int index = 0;
         for (Nameable op : operations) {
             JMenuItem item = new JMenuItem(op.getName());
@@ -35,30 +68,8 @@ public class JSelector {
                         listener.exec(e.getActionCommand());
                 }
             });
-            selector.add(item);
+            add(item);
             index++;
         }
-        selector.show(comp, comp.getBorder().getBorderInsets(comp).left / 2, comp.getHeight() - comp.getBorder().getBorderInsets(comp).bottom + 1);
-    }
-
-    public void showColumns(String[] values, boolean[] visible, JComponent comp, int x, int y, final Closure listener) {
-        selector.removeAll();
-        for (int i = 1; i < values.length; i++) {
-            JCheckBoxMenuItem item = new JCheckBoxMenuItem(values[i]);
-            item.setActionCommand(Integer.toString(i));
-            item.setState(visible[i]);
-            item.addActionListener(new ActionListener() {
-
-                public void actionPerformed(ActionEvent e) {
-                    if (listener != null)
-                        listener.exec(e.getActionCommand());
-                }
-            });
-            selector.add(item);
-        }
-        selector.show(comp, x, y);
-    }
-
-    public JSelector() {
     }
 }

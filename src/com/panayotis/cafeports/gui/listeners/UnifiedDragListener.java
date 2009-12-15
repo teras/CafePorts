@@ -43,6 +43,8 @@ public class UnifiedDragListener implements MouseListener, MouseMotionListener {
     }
 
     public void mouseDragged(MouseEvent e) {
+        if (lastcomp==null)
+            return;
         newpos.setLocation(e.getPoint());
         SwingUtilities.convertPointToScreen(newpos, lastcomp);
         frame.setLocation(newpos.x - oldpos.x, newpos.y - oldpos.y);

@@ -35,10 +35,17 @@ public class JBar extends JPanel implements ActionListener {
     private final JToolButton reload;
     private final JToolButton info;
     private final UnifiedDragListener drag;
+    /* */
+    private final JSelector sel;
+    private final SelectorListener listener;
+    private final boolean[] toolbarselection = {true, false, false, false, false};
+    private final String[] toolbartext = {"Icon and Text", "Icon only", "Text only", null, "Use small size"};
 
     public JBar(JPortWindow window) {
         this.frame = window;
         drag = new UnifiedDragListener(frame);
+        sel = new JSelector();
+        listener = new SelectorListener();
         final JPanel lefts = new JPanel();
         final JPanel rights = new JPanel();
 
@@ -63,11 +70,14 @@ public class JBar extends JPanel implements ActionListener {
         selfupdate = initButton("Selfupdate", ONLY, "s", false);
         lefts.add(selfupdate);
 
+        updateLabelType(0);
+
         drag.register(this);
         setLayout(new BorderLayout());
         setBorder(new EmptyBorder(0, 4, 0, 0));
         add(lefts, BorderLayout.WEST);
         add(rights, BorderLayout.EAST);
+        setComponentPopupMenu(sel);
         setEnabled(false);
     }
 
@@ -81,6 +91,37 @@ public class JBar extends JPanel implements ActionListener {
         selfupdate.setEnabled(status);
         reload.setEnabled(status);
         info.setEnabled(status);
+    }
+
+    public void updateLabelType(int type_id) {
+        if (type_id <= 2) {
+            for (int i = 0; i <= 2; i++)
+                toolbarselection[i] = false;
+            toolbarselection[type_id] = true;
+
+            JToolButton.Label labeltype = JToolButton.Label.values()[type_id];
+            install.setLabelType(labeltype);
+            remove.setLabelType(labeltype);
+            update.setLabelType(labeltype);
+            activate.setLabelType(labeltype);
+            deactivate.setLabelType(labeltype);
+            selfupdate.setLabelType(labeltype);
+            reload.setLabelType(labeltype);
+            info.setLabelType(labeltype);
+        } else {
+            boolean size = !toolbarselection[4];
+            toolbarselection[4] = size;
+            install.setIconSize(size);
+            remove.setIconSize(size);
+            update.setIconSize(size);
+            activate.setIconSize(size);
+            deactivate.setIconSize(size);
+            selfupdate.setIconSize(size);
+            reload.setIconSize(size);
+            info.setIconSize(size);
+        }
+        sel.setItems(toolbartext, toolbarselection, 0, listener);
+        frame.doLayout();
     }
 
     private final JToolButton initButton(String label, JToolButton.Location position, String actioncommand, boolean toggle) {
@@ -142,5 +183,12 @@ public class JBar extends JPanel implements ActionListener {
             }
         };
         PortProcess.exec(basecommand, ports, self_l);
+    }
+
+    private class SelectorListener implements Closure {
+
+        public void exec(Object data) {
+            updateLabelType(Integer.parseInt(data.toString()));
+        }
     }
 }
