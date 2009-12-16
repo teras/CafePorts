@@ -24,8 +24,6 @@ public class PortList {
     /* */
     private final HashMap<String, Vector<String>> cats = new HashMap<String, Vector<String>>();
     private final MutableArray<PortInfo> list = new MutableArray<PortInfo>();
-    private long this_last_modified;
-    private long this_last_size;
 
     public static final void invalidatePortLists() {
         base = null;
@@ -46,12 +44,12 @@ public class PortList {
     }
 
     public static void initBaseList(UpdateListener listener) {
-        base = new PortList(base, true, listener);
+        base = new PortList(listener);
         filtered = base;
     }
 
     public static final void updateFilters(FilterChain chain) {
-        filtered = new PortList(base, false, null); // Will initialize port list, if not present
+        filtered = new PortList(base); // Will initialize port list, if not present
         boolean valid;
         for (PortInfo p : base.getList()) {
             valid = true;
@@ -68,27 +66,16 @@ public class PortList {
     private PortList() {
     }
 
-    private PortList(PortList oldlist, boolean updatable, UpdateListener listener) {
-        this_last_modified = -1;
-        this_last_size = -1;
-        if (updatable)
-            PortListFactory.update(this, oldlist, listener);
-        else {
-            cats.putAll(oldlist.cats);
-            this_last_modified = oldlist.this_last_modified;
-            this_last_size = oldlist.this_last_size;
-        }
+    private PortList(PortList oldlist) {
+        cats.putAll(oldlist.cats);
+    }
+
+    private PortList(UpdateListener listener) {
+        PortListFactory.update(this, listener);
     }
 
     public void add(PortInfo portInfo) {
         list.add(portInfo);
-    }
-
-    public void copy(PortList oldlist) {
-        list.clear();
-        list.addAll(oldlist.list);
-        cats.clear();
-        cats.putAll(oldlist.cats);
     }
 
     public void sort() {
@@ -121,15 +108,5 @@ public class PortList {
 
     public Vector<String> getCategory(String tag) {
         return cats.get(tag);
-    }
-
-    boolean isNotUpdated(long lastModified, long length) {
-//        System.out.println(this_last_modified + " - " + lastModified);
-        return (this_last_modified == lastModified && this_last_size == length);
-    }
-
-    void setUpdated(long lastModified, long length) {
-        this_last_modified = lastModified;
-        this_last_size = length;
     }
 }

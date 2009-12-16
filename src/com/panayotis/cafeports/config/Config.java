@@ -4,7 +4,10 @@
  */
 package com.panayotis.cafeports.config;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.prefs.Preferences;
 
@@ -15,18 +18,16 @@ import java.util.prefs.Preferences;
 public class Config {
 
     public static Config base = new Config();
-    static final String PREFIX_PREF = "PREFIX_DIR";
+    private static final String PREFIX_PREF = "PREFIX_DIR";
     /* */
     static final String DEFAULT_PREFIX_DIR = "/opt/local/";
-    static final String DEFAULT_SOURCE = "rsync.macports.org";
     /* */
-    static final String VAR_MACPORTS = "var/macports/";
-    static final String BINDIR = "bin/";
-    static final String RELEASE_PORTS = "sources/" + DEFAULT_SOURCE + "/release/ports/";
+    static final String PORTCOMMAND = "bin/port";
+    static final String SOURCESLIST = "etc/macports/sources.conf";
+    static final String MACPORTS = "var/macports/sources/";
+    static final String RECEIPTSDIR = "var/macports/receipts/";
     /* */
-    static final String PORTINDEX = "PortIndex";
-    static final String PORTCMD = "port";
-    static final String RECEIPTS = "receipts/";
+    static final String PORTINDEXFILE = "PortIndex";
     /* */
     private String prefix;
     private boolean current_prefix_valid;
@@ -42,16 +43,45 @@ public class Config {
         listeners = new HashSet<ConfigListener>();
     }
 
-    public String getPortIndex() {
-        return prefix + VAR_MACPORTS + RELEASE_PORTS + PORTINDEX;
+    public ArrayList<String> getPortIndices() {
+        BufferedReader in = null;
+        ArrayList<String> res = new ArrayList<String>();
+        try {
+            String line;
+            in = new BufferedReader(new FileReader(new File(prefix, SOURCESLIST)));
+            while ((line = in.readLine()) != null) {
+                line = line.replace("[default]", "");
+                line = line.trim();
+                if (line.startsWith("#"))
+                    line = "";
+                if (!line.equals("")) {
+                    if (line.startsWith("file://"))
+                        line = line.substring("file://".length());
+                    else if (line.startsWith("rsync://"))
+                        line = prefix + MACPORTS + line.substring("rsync://".length());
+                    if (!line.endsWith("/"))
+                        line += "/";
+                    line.trim();
+                    if (!line.equals(""))
+                        res.add(line + PORTINDEXFILE);
+                }
+            }
+        } catch (Exception e) {
+        } finally {
+            try {
+                in.close();
+            } catch (Exception e) {
+            }
+        }
+        return res;
     }
 
     public String getPortCmd() {
-        return prefix + BINDIR + PORTCMD;
+        return prefix + PORTCOMMAND;
     }
 
     public String getReceiptsDir() {
-        return prefix + VAR_MACPORTS + RECEIPTS;
+        return prefix + RECEIPTSDIR;
     }
 
     public String getPrefix() {
@@ -82,13 +112,7 @@ public class Config {
     public boolean isPrefixValid() {
         if (!current_prefix_valid)
             return false;
-        File newport = new File(prefix, BINDIR + PORTCMD);
-        if (newport.exists()) {
-            File newportindex = new File(prefix, VAR_MACPORTS);
-            if (newportindex.exists())
-                return true;
-        }
-        return false;
+        return (new File(prefix, SOURCESLIST).exists());
     }
 
     public void setCurrentPrefixInvalid() {

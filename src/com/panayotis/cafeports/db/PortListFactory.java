@@ -54,51 +54,49 @@ public class PortListFactory {
         hashes = ondisk;
     }
 
-    public static boolean update(PortList newlist, PortList oldlist, UpdateListener listener) throws PortListException {
+    public static void update(PortList list, UpdateListener listener) throws PortListException {
         listener.setStage(0);
-        boolean base_has_changed = updateBase(newlist, oldlist, listener);
+        updateBase(list, listener);
         listener.setStage(1);
-        updateInstalled(newlist, listener);
-        return base_has_changed;
+        updateInstalled(list, listener);
     }
 
-    private static boolean updateBase(PortList newlist, PortList oldlist, UpdateListener listener) throws PortListException {
-        File cfile = new File(Config.base.getPortIndex());
+    private static void updateBase(PortList list, UpdateListener listener) throws PortListException {
+        for (String portindex : Config.base.getPortIndices())
+            updateBaseWithPortIndex(portindex, list, listener);
+    }
+
+    private static void updateBaseWithPortIndex(String portindex, PortList list, UpdateListener listener) throws PortListException {
+        File cfile = new File(portindex);
         if (!(cfile.exists() && cfile.isFile() && cfile.canRead()))
             throw new PortListException("File " + cfile.getPath() + " is not parsable.");
 
-        if (oldlist != null && oldlist.isNotUpdated(cfile.lastModified(), cfile.length()))
-            newlist.copy(oldlist);
-        else {
-            BufferedReader in = null;
-            int count = 0;
-            long all_size = new File(Config.base.getPortIndex()).length();
-            long size_now = 0;
+        BufferedReader in = null;
+        int count = 0;
+        long all_size = cfile.length();
+        long size_now = 0;
+        try {
+            in = new BufferedReader(new FileReader(cfile));
+            String line, line2;
+            while ((line = in.readLine()) != null) {
+                line2 = in.readLine();
+                size_now += line.length() + line2.length() + 2;
+                if ((count % 100) == 0) {
+                    count = 0;
+                    listener.setPercent(((float) size_now) / all_size);
+                }
+                list.add(new PortInfo(line, line2));
+                count++;
+            }
+            list.sort();
+        } catch (Exception ex) {
+            throw new PortListException(ex.getMessage());
+        } finally {
             try {
-                in = new BufferedReader(new FileReader(Config.base.getPortIndex()));
-                String line, line2;
-                while ((line = in.readLine()) != null) {
-                    line2 = in.readLine();
-                    size_now += line.length() + line2.length() + 2;
-                    if ((count % 100) == 0) {
-                        count = 0;
-                        listener.setPercent(((float) size_now) / all_size);
-                    }
-                    newlist.add(new PortInfo(line, line2));
-                    count++;
-                }
-                newlist.sort();
+                in.close();
             } catch (Exception ex) {
-                throw new PortListException(ex.getMessage());
-            } finally {
-                try {
-                    in.close();
-                } catch (Exception ex) {
-                }
             }
         }
-        newlist.setUpdated(cfile.lastModified(), cfile.length());
-        return true;
     }
 
     private static boolean updateInstalled(PortList list, UpdateListener listener) throws PortListException {
