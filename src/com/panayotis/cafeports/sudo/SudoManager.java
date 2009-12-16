@@ -45,7 +45,7 @@ public class SudoManager {
     }
 
     static boolean testSudo(String pass) {
-        if (pass == null || pass.equals(""))
+        if (pass == null)
             return false;
 
         final String SIGNATURE = "_ALL_OK_";
