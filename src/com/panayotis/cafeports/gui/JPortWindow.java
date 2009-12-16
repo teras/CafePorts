@@ -5,6 +5,7 @@
 package com.panayotis.cafeports.gui;
 
 import com.panayotis.cafeports.db.PortInfo;
+import com.panayotis.cafeports.db.PortList;
 import com.panayotis.cafeports.db.UpdateListener;
 import com.panayotis.cafeports.gui.portinfo.JPortInfo;
 import com.panayotis.cafeports.gui.table.JPortList;
@@ -30,6 +31,7 @@ public class JPortWindow extends JFrame {
     private final JPortList portlist;
     private final JPortInfo info;
     private final JBar bar;
+    private final JBottomBar bottombar;
 
     public JPortWindow() {
         super();
@@ -41,13 +43,15 @@ public class JPortWindow extends JFrame {
         portlist = new JPortList();
         info = new JPortInfo(this);
         bar = new JBar(this);
+        bottombar = new JBottomBar(this);
+        JPanel viewport = new JPanel(new BorderLayout());
 
         mainview.add(initialization, BorderLayout.NORTH);
         mainview.add(portlist, BorderLayout.CENTER);
 
-        JPanel viewport = new JPanel(new BorderLayout());
         viewport.add(mainview, BorderLayout.CENTER);
         viewport.add(bar, BorderLayout.NORTH);
+        viewport.add(bottombar, BorderLayout.SOUTH);
         getContentPane().add(viewport);
 
         portlist.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
@@ -58,6 +62,7 @@ public class JPortWindow extends JFrame {
                     info.updateInfo(null);
                 else
                     info.updateInfo(selected[0]);
+                bottombar.setHowMany(PortList.countBasePortList(), PortList.getFilteredPortList().getSize(), selected.length);
             }
         });
 
@@ -102,9 +107,9 @@ public class JPortWindow extends JFrame {
                             break;
                         case OK:
                             filters.requestListUpdate();
-                            portlist.updatePortList();
                             mainview.add(filters, BorderLayout.NORTH);
                             bar.setEnabled(true);
+                            updateList();
                             break;
                     }
                     validate();
@@ -145,6 +150,11 @@ public class JPortWindow extends JFrame {
 
     public UpdateListener getUpdateListener() {
         return initialization;
+    }
+
+    public void updateList() {
+        portlist.updatePortList();
+        bottombar.setHowMany(PortList.countBasePortList(), PortList.getFilteredPortList().getSize(), 0);
     }
 
     public enum Status {

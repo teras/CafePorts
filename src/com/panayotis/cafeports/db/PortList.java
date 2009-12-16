@@ -37,6 +37,10 @@ public class PortList {
         return empty;
     }
 
+    public static final int countBasePortList() {
+        return base.getSize();
+    }
+
     public static final PortList getFilteredPortList() {
         return filtered;
     }

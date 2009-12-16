@@ -72,7 +72,7 @@ public class JFilters extends JPanel {
 
     public void requestListUpdate() {
         PortList.updateFilters(chain);
-        corewindow.getJPortList().updatePortList();
+        corewindow.updateList();
     }
 
     public void addFilter(Filter nextFilter, Filter filter) {
