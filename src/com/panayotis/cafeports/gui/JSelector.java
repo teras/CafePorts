@@ -36,9 +36,9 @@ public class JSelector extends JPopupMenu {
         for (int i = 0; i < values.length; i++) {
             String val = values[i];
             JComponent item;
-            if (val == null) {
+            if (val == null)
                 item = new JSeparator();
-            } else {
+            else {
                 JCheckBoxMenuItem itemc = new JCheckBoxMenuItem(values[i]);
                 itemc.setActionCommand(Integer.toString(i));
                 itemc.setState(selected[i]);

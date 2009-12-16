@@ -93,11 +93,6 @@ public class JToolButton extends JPanel {
         }
     }
 
-    public enum Location {
-
-        FIRST, LAST, MIDDLE, ONLY
-    };
-
     public enum Label {
 
         BOTH, ICON, TEXT
