@@ -6,7 +6,6 @@ package com.panayotis.cafeports.db;
 
 import com.panayotis.cafeports.config.Config;
 import com.panayotis.cafeports.config.ConfigListener;
-import com.panayotis.cafeports.config.JConfiguration;
 import com.panayotis.cafeports.gui.JPortWindow;
 import javax.swing.JOptionPane;
 
@@ -17,7 +16,7 @@ import javax.swing.JOptionPane;
 public class PortListManager {
 
     private static PortListManager manager;
-
+    private static final String ERRORMSG = "Unable to initialize Macports\nPlease correct this error from the Preferences menu";
     /* */
     private final JPortWindow window;
 
@@ -45,22 +44,19 @@ public class PortListManager {
             public void run() {
                 if (!Config.base.isPrefixValid()) {
                     getValidator().window.setStatus(JPortWindow.Status.ERROR);
-                    JConfiguration.fireDisplay(true);
+                    JOptionPane.showMessageDialog(null, ERRORMSG);
                     return;
                 } else
                     getValidator().window.setStatus(JPortWindow.Status.LOADING_1);
-
                 try {
                     /*  Will break here, if not right */
                     PortList.initBaseList(getValidator().window.getUpdateListener());
                     /* Everything OK */
                     getValidator().window.setStatus(JPortWindow.Status.OK);
-                    JConfiguration.fireHide();
                 } catch (PortListException ex) {
                     getValidator().window.setStatus(JPortWindow.Status.ERROR);
                     Config.base.setCurrentPrefixInvalid();
-                    JOptionPane.showMessageDialog(null, "Unable to initialize Macports\n" + ex.getMessage());
-                    JConfiguration.fireDisplay(true);
+                    JOptionPane.showMessageDialog(null, ERRORMSG + "\n" + ex.getMessage());
                     return;
                 }
             }

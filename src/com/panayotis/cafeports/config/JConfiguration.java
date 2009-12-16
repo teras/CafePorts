@@ -26,7 +26,6 @@ import javax.swing.SwingUtilities;
 public class JConfiguration extends javax.swing.JDialog {
 
     private static final JConfiguration dialog = new JConfiguration();
-    private static boolean isAutoHide = true;
 
     /** Creates new form JConfiguration */
     private JConfiguration() {
@@ -110,7 +109,6 @@ public class JConfiguration extends javax.swing.JDialog {
     // End of variables declaration//GEN-END:variables
 
     public static void fireDisplay(boolean autoHide) {
-        isAutoHide &= autoHide;
         SwingUtilities.invokeLater(new Runnable() {
 
             public void run() {
@@ -131,10 +129,5 @@ public class JConfiguration extends javax.swing.JDialog {
             } else if (comp instanceof Container)
                 disableNewFolderButton((Container) comp);
         }
-    }
-
-    public static void fireHide() {
-        if (isAutoHide)
-            dialog.setVisible(false);
     }
 }
