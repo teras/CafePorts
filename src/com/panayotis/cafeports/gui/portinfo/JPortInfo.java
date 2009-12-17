@@ -49,6 +49,7 @@ public class JPortInfo extends javax.swing.JFrame implements MouseListener, Mous
     private final JClearText description;
     private final JClearText long_description;
     private final JClearTextureButton url;
+    private final JClearTextureButton tracker;
     private final JClearEmail email;
     /* */
     private int dx = 5;
@@ -63,6 +64,7 @@ public class JPortInfo extends javax.swing.JFrame implements MouseListener, Mous
         frame = parentframe;
         url = new JClearTextureButton();
         email = new JClearEmail();
+        tracker = new JClearTextureButton();
 
         JClearBottom bottom = new JClearBottom(8);
 
@@ -101,9 +103,12 @@ public class JPortInfo extends javax.swing.JFrame implements MouseListener, Mous
         url.setText("Project Homepage");
         email.setBackground(backgroundC);
         email.setText("E-mail maintainer");
+        tracker.setBackground(backgroundC);
+        tracker.setText("Tracker information");
 
         viewport.add(url);
         viewport.add(email);
+        viewport.add(tracker);
         viewport.add(bottom);
 
         setLayout(new BorderLayout());
@@ -130,6 +135,7 @@ public class JPortInfo extends javax.swing.JFrame implements MouseListener, Mous
             long_description.setText("Please select a package to display information");
             url.setVisible(false);
             email.setVisible(false);
+            tracker.setVisible(false);
             infoAsString = null;
         } else {
             String nameT = info.getData("name");
@@ -145,6 +151,7 @@ public class JPortInfo extends javax.swing.JFrame implements MouseListener, Mous
             long_description.setText(ldescrT);
             url.setURL(hpT);
             email.setURL(emailT);
+            tracker.setURL("http://trac.macports.org/search?q="+nameT);
 
             StringBuffer buf = new StringBuffer();
             buf.append(nameT).append(' ').append(versionT).append('\n')
