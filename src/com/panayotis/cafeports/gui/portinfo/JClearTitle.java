@@ -20,14 +20,12 @@ public class JClearTitle extends JClearPanel {
     private final JRounder tl;
     private final JRounder tr;
     private final JClearButton closeB;
-    private final JClearButton clipboardB;
 
     public JClearTitle() {
         label = new JClearLabel();
         tl = new JRounder(JRounder.Location.TOPLEFT);
         tr = new JRounder(JRounder.Location.TOPRIGHT);
         closeB = new JClearButton("/icons/buttons/close.png");
-        clipboardB = new JClearButton("/icons/buttons/clipboard.png");
         JClearPanel left = new JClearPanel();
         JClearPanel right = new JClearPanel();
 
@@ -36,7 +34,6 @@ public class JClearTitle extends JClearPanel {
         tr.setPreferredSize(size);
 
         closeB.setToolTipText("Close info window");
-        clipboardB.setToolTipText("Copy information to clipboard");
 
         left.setLayout(new BorderLayout());
         left.add(tl, BorderLayout.WEST);
@@ -44,11 +41,10 @@ public class JClearTitle extends JClearPanel {
 
         right.setLayout(new BorderLayout());
         right.add(tr, BorderLayout.EAST);
-        right.add(clipboardB, BorderLayout.CENTER);
 
         label.setFont(label.getFont().deriveFont(label.getFont().getStyle() | java.awt.Font.BOLD));
         label.setHorizontalAlignment(JLabel.CENTER);
-        label.setBorder(new EmptyBorder(2, 4, 2, 4));
+        label.setBorder(new EmptyBorder(2, 4, 2, 14));
 
         setLayout(new BorderLayout());
         add(left, BorderLayout.WEST);
@@ -66,8 +62,5 @@ public class JClearTitle extends JClearPanel {
 
     public void addCloseListener(ActionListener l) {
         closeB.addActionListener(l);
-    }
-    public void addClipBoardListener(ActionListener l) {
-        clipboardB.addActionListener(l);
     }
 }

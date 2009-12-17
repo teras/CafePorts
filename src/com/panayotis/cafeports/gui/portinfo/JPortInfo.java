@@ -15,11 +15,10 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Point;
-import java.awt.Toolkit;
 import java.awt.Window;
-import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -48,13 +47,10 @@ public class JPortInfo extends javax.swing.JFrame implements MouseListener, Mous
     private final JClearLabel version;
     private final JClearText description;
     private final JClearText long_description;
-    private final JClearTextureButton url;
-    private final JClearTextureButton tracker;
-    private final JClearEmail email;
+    private final JClearTools tools;
     /* */
     private int dx = 5;
     private int dy = 0;
-    private String infoAsString = null;
     private Point oldpos = new Point();
     private Point newpos = new Point();
 
@@ -62,10 +58,7 @@ public class JPortInfo extends javax.swing.JFrame implements MouseListener, Mous
     public JPortInfo(Window parentframe) {
         title = new JClearTitle();
         frame = parentframe;
-        url = new JClearTextureButton();
-        email = new JClearEmail();
-        tracker = new JClearTextureButton();
-
+        tools = new JClearTools();
         JClearBottom bottom = new JClearBottom(8);
 
         getRootPane().putClientProperty("Window.style", "small");
@@ -84,31 +77,15 @@ public class JPortInfo extends javax.swing.JFrame implements MouseListener, Mous
                 setVisible(false);
             }
         });
-        title.addClipBoardListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                if (infoAsString != null)
-                    Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(infoAsString), null);
-            }
-        });
 
         bottom.setBackground(backgroundC);
+        tools.setBackground(backgroundC);
 
         viewport.add(title);
         version = initLabel("Version", 3);
         description = initTextField("", 1, 40, false, false);
         long_description = initTextField("", 4, 80, true, true);
-
-        url.setBackground(backgroundC);
-        url.setText("Project Homepage");
-        email.setBackground(backgroundC);
-        email.setText("E-mail maintainer");
-        tracker.setBackground(backgroundC);
-        tracker.setText("Tracker information");
-
-        viewport.add(url);
-        viewport.add(email);
-        viewport.add(tracker);
+        viewport.add(tools);
         viewport.add(bottom);
 
         setLayout(new BorderLayout());
@@ -133,10 +110,7 @@ public class JPortInfo extends javax.swing.JFrame implements MouseListener, Mous
             version.setText("---");
             description.setText("Not any package selected");
             long_description.setText("Please select a package to display information");
-            url.setVisible(false);
-            email.setVisible(false);
-            tracker.setVisible(false);
-            infoAsString = null;
+            tools.setVisible(false);
         } else {
             String nameT = info.getData("name");
             String versionT = info.getData("version");
@@ -144,20 +118,18 @@ public class JPortInfo extends javax.swing.JFrame implements MouseListener, Mous
             String ldescrT = info.getData("long_description");
             String hpT = info.getData("homepage");
             String emailT = info.getData("maintainers");
+            StringBuffer buf = new StringBuffer();
+            buf.append(nameT).append(' ').append(versionT).append('\n').append(descrT).append('\n').append(ldescrT).append('\n').append(hpT).append('\n').append(emailT);
 
             title.setText(nameT);
             version.setText(versionT);
             description.setText(descrT);
             long_description.setText(ldescrT);
-            url.setURL(hpT);
-            email.setURL(emailT);
-            tracker.setURL("http://trac.macports.org/search?q="+nameT);
-
-            StringBuffer buf = new StringBuffer();
-            buf.append(nameT).append(' ').append(versionT).append('\n')
-                    .append(descrT).append('\n').append(ldescrT).append('\n')
-                    .append(hpT).append('\n').append(emailT);
-            infoAsString = buf.toString();
+            tools.setWeb(hpT);
+            tools.setEMail(emailT);
+            tools.setName(nameT);
+            tools.setInfo(buf.toString());
+            tools.setVisible(true);
         }
         pack();
         try {
