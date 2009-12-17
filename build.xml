@@ -17,14 +17,15 @@
     <target name="macosx" depends="jar">
         <jarbundler
             dir="dist"
-            jars="dist/CafePorts.jar"
-            mainclass="CafePorts"
             name="${bundlename}"
+            mainclass="CafePorts"
+            jar="dist/CafePorts.jar"
+
             bundleid="com.panayotis.cafeports"
-            infostring="CaféPorts ${version}"
+            infostring="${version} © 2009 Panayotis Katsaloulis"
             jvmversion="1.5+"
             screenmenu="true"
-            version="${version}"
+            version="${version} © 2009 Panayotis Katsaloulis"
             icon="resources/macosx/cafeports.icns"
             shortname="CaféPorts"
 			vmoptions="-Xms128m -Xmx256m"

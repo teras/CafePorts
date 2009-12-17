@@ -33,7 +33,7 @@ public class JSelector extends JPopupMenu {
 
     public void setItems(String[] values, boolean[] selected, int offset, final Closure listener) {
         removeAll();
-        for (int i = 0; i < values.length; i++) {
+        for (int i = offset; i < values.length; i++) {
             String val = values[i];
             JComponent item;
             if (val == null)
