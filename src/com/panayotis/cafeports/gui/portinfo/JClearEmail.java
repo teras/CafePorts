@@ -10,7 +10,7 @@ import java.util.StringTokenizer;
  *
  * @author teras
  */
-public class JClearEmail extends JClearButton {
+public class JClearEmail extends JClearTextureButton {
 
     public void setURL(String email) {
         if (email != null && email.equals("nomaintainer"))

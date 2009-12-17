@@ -180,7 +180,7 @@ public class JBar extends JPanel implements ActionListener {
                 PortListManager.forceReloadData();
                 break;
             case '?':
-                frame.setInfoVisible(((JToggleButton) ev.getSource()).isSelected());
+                frame.setInfoVisible(true);
                 return;
             default:
         }

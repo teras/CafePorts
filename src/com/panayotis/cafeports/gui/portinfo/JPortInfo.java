@@ -17,7 +17,11 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Font;
 import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.Window;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -34,33 +38,33 @@ public class JPortInfo extends javax.swing.JFrame implements MouseListener, Mous
     private final static int BORDEREDGE = 8;
     private final static int TEXTGAP = 4;
     private final static Color transparent = new Color(0, 0, 0, 5);
-    private final static Color background = new Color(30, 30, 50, 240);
-    private final static Color foreground = Color.white;
+    private final static Color backgroundC = new Color(30, 30, 50, 240);
+    private final static Color foregroundC = Color.white;
+    private final static Color titleC = new Color(75, 75, 115, 240);
     /* */
     private final Window frame;
     private final JClearPanel viewport;
-    private final JRoundEdge name;
+    private final JClearTitle title;
     private final JClearLabel version;
     private final JClearText description;
     private final JClearText long_description;
-    private final JClearButton url;
+    private final JClearTextureButton url;
     private final JClearEmail email;
     /* */
     private int dx = 5;
     private int dy = 0;
+    private String infoAsString = null;
     private Point oldpos = new Point();
     private Point newpos = new Point();
-    private final Component self;
 
     /** Creates new form JPortInfo */
     public JPortInfo(Window parentframe) {
-        name = new JRoundEdge(16, 16);
+        title = new JClearTitle();
         frame = parentframe;
-        url = new JClearButton();
+        url = new JClearTextureButton();
         email = new JClearEmail();
-        self = this;
 
-        JRoundEdge lower = new JRoundEdge(8, 0);
+        JClearBottom bottom = new JClearBottom(8);
 
         getRootPane().putClientProperty("Window.style", "small");
         setBackground(transparent);
@@ -68,26 +72,39 @@ public class JPortInfo extends javax.swing.JFrame implements MouseListener, Mous
 
         viewport = new JClearPanel();
         viewport.setLayout(new BoxLayout(viewport, BoxLayout.Y_AXIS));
-        viewport.setBackground(background);
+        viewport.setBackground(backgroundC);
 
-        lower.setBackground(background);
-        lower.setUpside(true);
-        name.setBackground(background);
-        name.setForeground(foreground);
+        title.setBackground(titleC);
+        title.setForeground(foregroundC);
+        title.addCloseListener(new ActionListener() {
 
-        viewport.add(name);
+            public void actionPerformed(ActionEvent e) {
+                setVisible(false);
+            }
+        });
+        title.addClipBoardListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                if (infoAsString != null)
+                    Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(infoAsString), null);
+            }
+        });
+
+        bottom.setBackground(backgroundC);
+
+        viewport.add(title);
         version = initLabel("Version", 3);
         description = initTextField("", 1, 40, false, false);
         long_description = initTextField("", 4, 80, true, true);
 
-        url.setBackground(background);
+        url.setBackground(backgroundC);
         url.setText("Project Homepage");
-        email.setBackground(background);
+        email.setBackground(backgroundC);
         email.setText("E-mail maintainer");
 
         viewport.add(url);
         viewport.add(email);
-        viewport.add(lower);
+        viewport.add(bottom);
 
         setLayout(new BorderLayout());
         add(viewport, BorderLayout.NORTH);
@@ -107,19 +124,33 @@ public class JPortInfo extends javax.swing.JFrame implements MouseListener, Mous
 
     public void updateInfo(final PortInfo info) {
         if (info == null) {
-            name.setText("---");
+            title.setText("---");
             version.setText("---");
             description.setText("Not any package selected");
             long_description.setText("Please select a package to display information");
             url.setVisible(false);
             email.setVisible(false);
+            infoAsString = null;
         } else {
-            name.setText(info.getData("name"));
-            version.setText(info.getData("version"));
-            description.setText(info.getData("description"));
-            long_description.setText(info.getData("long_description"));
-            url.setURL(info.getData("homepage"));
-            email.setURL(info.getData("maintainers"));
+            String nameT = info.getData("name");
+            String versionT = info.getData("version");
+            String descrT = info.getData("description");
+            String ldescrT = info.getData("long_description");
+            String hpT = info.getData("homepage");
+            String emailT = info.getData("maintainers");
+
+            title.setText(nameT);
+            version.setText(versionT);
+            description.setText(descrT);
+            long_description.setText(ldescrT);
+            url.setURL(hpT);
+            email.setURL(emailT);
+
+            StringBuffer buf = new StringBuffer();
+            buf.append(nameT).append(' ').append(versionT).append('\n')
+                    .append(descrT).append('\n').append(ldescrT).append('\n')
+                    .append(hpT).append('\n').append(emailT);
+            infoAsString = buf.toString();
         }
         pack();
         try {
@@ -149,10 +180,10 @@ public class JPortInfo extends javax.swing.JFrame implements MouseListener, Mous
         JClearLabel nameL = new JClearLabel(name);
         JClearLabel valueL = new JClearLabel();
 
-        nameL.setForeground(foreground);
-        nameL.setBackground(background);
-        valueL.setForeground(foreground);
-        valueL.setBackground(background);
+        nameL.setForeground(foregroundC);
+        nameL.setBackground(backgroundC);
+        valueL.setForeground(foregroundC);
+        valueL.setBackground(backgroundC);
         valueL.setFont(valueL.getFont().deriveFont(valueL.getFont().getStyle() | java.awt.Font.BOLD));
 
         if (name.equals(""))
@@ -160,7 +191,7 @@ public class JPortInfo extends javax.swing.JFrame implements MouseListener, Mous
         else
             area.setLayout(new BorderLayout(TEXTGAP, 0));
         area.setBorder(new EmptyBorder(border, BORDEREDGE, border, BORDEREDGE));
-        area.setBackground(background);
+        area.setBackground(backgroundC);
         area.setOpaque(false);
 
         area.add(nameL, BorderLayout.WEST);
@@ -175,16 +206,16 @@ public class JPortInfo extends javax.swing.JFrame implements MouseListener, Mous
         JClearLabel nameL = new JClearLabel(name);
         JClearText valueT = new JClearText(height);
 
-        nameL.setForeground(foreground);
-        nameL.setBackground(background);
+        nameL.setForeground(foregroundC);
+        nameL.setBackground(backgroundC);
         nameL.setFont(nameL.getFont().deriveFont(nameL.getFont().getSize() - 1f));
 
         area.setLayout(new BorderLayout(TEXTGAP, 0));
         area.setBorder(new EmptyBorder(border, BORDEREDGE, border, BORDEREDGE));
-        area.setBackground(background);
+        area.setBackground(backgroundC);
         area.setOpaque(false);
 
-        valueT.setDisabledTextColor(foreground);
+        valueT.setDisabledTextColor(foregroundC);
         if (isSmaller)
             valueT.setFont(valueT.getFont().deriveFont(valueT.getFont().getSize() * 0.9f));
         if (isItalics)
@@ -236,16 +267,19 @@ public class JPortInfo extends javax.swing.JFrame implements MouseListener, Mous
     }
 
     private void redispatchMouseEvent(MouseEvent e, boolean repaint) {
-        Point glassPanePoint = e.getPoint();
-        Container container = contentPane;
-        Point containerPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint, contentPane);
+        try {
+            Point glassPanePoint = e.getPoint();
+            Container container = contentPane;
+            Point containerPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint, contentPane);
 
-        if (containerPoint.y >= 0) {
-            Component component = SwingUtilities.getDeepestComponentAt(container, containerPoint.x, containerPoint.y);
-            if ((component != null)) {
-                Point componentPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint, component);
-                component.dispatchEvent(new MouseEvent(component, e.getID(), e.getWhen(), e.getModifiers(), componentPoint.x, componentPoint.y, e.getClickCount(), e.isPopupTrigger()));
+            if (containerPoint.y >= 0) {
+                Component component = SwingUtilities.getDeepestComponentAt(container, containerPoint.x, containerPoint.y);
+                if ((component != null)) {
+                    Point componentPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint, component);
+                    component.dispatchEvent(new MouseEvent(component, e.getID(), e.getWhen(), e.getModifiers(), componentPoint.x, componentPoint.y, e.getClickCount(), e.isPopupTrigger()));
+                }
             }
+        } catch (Exception ex) {
         }
     }
 }
