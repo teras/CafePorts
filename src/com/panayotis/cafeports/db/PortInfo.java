@@ -60,9 +60,13 @@ public class PortInfo implements Comparable {
             if (flipflop)
                 key = val;
             else
-                values.put(key, val);
+                store(values, key, val);
             flipflop = !flipflop;
         }
+    }
+
+    private static void store(HashMap<String, String> values, String key, String value) {
+        values.put(key, value);
     }
 
     private static final int countChar(String str, char q) {
