@@ -42,7 +42,7 @@ public class JClearTools extends JClearPanel {
         webB.setToolTipText("Go to project homepage");
         emailB.setToolTipText("e-Mail maintainers");
         trackerB.setToolTipText("Go to tracker");
-        clipboardB.setToolTipText("Copy information to lcipboard");
+        clipboardB.setToolTipText("Copy information to clipboard");
 
         webB.addActionListener(new ActionListener() {
 
