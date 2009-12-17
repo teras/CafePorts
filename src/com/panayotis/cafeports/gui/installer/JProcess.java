@@ -168,6 +168,7 @@ public class JProcess extends javax.swing.JDialog {
     private void LogBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LogBActionPerformed
         ScrollArea.setVisible(true);
         LogB.setVisible(false);
+        setResizable(true);
         pack();
     }//GEN-LAST:event_LogBActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -50,7 +50,7 @@ public class Config {
             String line;
             in = new BufferedReader(new FileReader(new File(prefix, SOURCESLIST)));
             while ((line = in.readLine()) != null) {
-                line = line.replace("[default]", "");
+                line = line.replace("[default]", "").replace("[nosync]", "");
                 line = line.trim();
                 if (line.startsWith("#"))
                     line = "";
