@@ -66,7 +66,29 @@ public class PortInfo implements Comparable {
     }
 
     private static void store(HashMap<String, String> values, String key, String value) {
-        values.put(key, value);
+        if (key.equals("maintainers"))
+            if (!value.equals("nomaintainer")) {
+                StringBuffer buffer = new StringBuffer();
+                StringTokenizer tk = new StringTokenizer(value);
+                while (tk.hasMoreTokens()) {
+                    String person = tk.nextToken();
+                    int atsign = person.indexOf("@");
+                    if (atsign >= 0)
+                        buffer.append(person);
+                    else {
+                        int colon = person.indexOf(":");
+                        if (colon < 0)
+                            buffer.append(person).append("@macports.org");
+                        else
+                            buffer.append(person.substring(colon + 1)).append('@').append(person.substring(0, colon));
+                    }
+                    buffer.append(',');
+                }
+                value = buffer.substring(0, buffer.length() - 1);
+            } else
+                value = null;
+        if (value != null)
+            values.put(key, value);
     }
 
     private static final int countChar(String str, char q) {

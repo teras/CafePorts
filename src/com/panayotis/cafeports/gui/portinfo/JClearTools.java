@@ -11,7 +11,6 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.lang.reflect.Method;
-import java.util.StringTokenizer;
 import javax.swing.border.EmptyBorder;
 
 /**
@@ -107,28 +106,8 @@ public class JClearTools extends JClearPanel {
     }
 
     public void setEMail(String mail) {
-        if (mail != null && mail.equals("nomaintainer"))
-            mail = null;
-        if (mail != null) {
-            StringBuffer buffer = new StringBuffer();
-            buffer.append("mailto:");
-            StringTokenizer tk = new StringTokenizer(mail);
-            while (tk.hasMoreTokens()) {
-                String person = tk.nextToken();
-                int atsign = person.indexOf("@");
-                if (atsign >= 0)
-                    buffer.append(person);
-                else {
-                    int colon = person.indexOf(":");
-                    if (colon < 0)
-                        buffer.append(person).append("@macports.org");
-                    else
-                        buffer.append(person.substring(colon + 1)).append('@').append(person.substring(0, colon));
-                }
-                buffer.append(',');
-            }
-            mail = buffer.substring(0, buffer.length() - 1);
-        }
+        if (mail != null)
+            mail = "mailto:" + mail;
         this.email = mail;
         emailB.setEnabled(email != null);
     }
