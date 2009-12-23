@@ -29,7 +29,7 @@ public class JWaitingLabel extends JPanel implements UpdateListener {
         new ImageIcon(JWaitingLabel.class.getResource("/icons/stage1.png")),
         new ImageIcon(JWaitingLabel.class.getResource("/icons/stage2.png"))
     };
-    private static final Color WaitingColor = new Color(133, 198, 252);
+    private static final Color WaitingColor = new Color(186, 222, 253);
     private static final Color ErrorColor = new Color(255, 90, 39);
     private final static int MAXRESOLUTION = 1000;
     /* */

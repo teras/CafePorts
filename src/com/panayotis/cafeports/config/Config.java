@@ -4,6 +4,7 @@
  */
 package com.panayotis.cafeports.config;
 
+import com.panayotis.cafeports.db.PortList;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -93,6 +94,7 @@ public class Config {
             prefix += File.separator;
         if (this.prefix.equals(prefix))
             return;
+        PortList.invalidatePortLists();
         this.prefix = prefix;
         current_prefix_valid = true;    // Be optimistic!
         prefs.put(PREFIX_PREF, prefix);

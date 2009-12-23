@@ -10,13 +10,11 @@
  */
 package com.panayotis.cafeports.config;
 
-import com.panayotis.cafeports.db.PortList;
 import java.awt.Component;
 import java.awt.Container;
 import java.io.File;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 /**
@@ -45,27 +43,42 @@ public class JConfiguration extends javax.swing.JDialog {
     private void initComponents() {
 
         jPanel4 = new javax.swing.JPanel();
-        jPanel1 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
+        PrefixP = new javax.swing.JPanel();
+        PrefixL = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
         PrefixT = new javax.swing.JTextField();
         BrowseB = new javax.swing.JButton();
+        CommandP = new javax.swing.JPanel();
+        CommandL = new javax.swing.JLabel();
+        jPanel1 = new javax.swing.JPanel();
+        CommandT = new javax.swing.JTextField();
+        SudoC = new javax.swing.JCheckBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("CaféPorts Configuration");
         setModal(true);
         setResizable(false);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosed(java.awt.event.WindowEvent evt) {
+                formWindowClosed(evt);
+            }
+        });
 
-        jPanel4.setBorder(javax.swing.BorderFactory.createEmptyBorder(16, 16, 12, 16));
-        jPanel4.setLayout(new java.awt.BorderLayout(0, 4));
+        jPanel4.setBorder(javax.swing.BorderFactory.createEmptyBorder(24, 16, 24, 16));
+        jPanel4.setLayout(new java.awt.BorderLayout(0, 12));
 
-        jPanel1.setLayout(new java.awt.BorderLayout(8, 0));
+        PrefixP.setLayout(new java.awt.BorderLayout(8, 0));
 
-        jLabel1.setText("MacPorts prefix");
-        jPanel1.add(jLabel1, java.awt.BorderLayout.LINE_START);
+        PrefixL.setText("MacPorts prefix (usually /opt/local)");
+        PrefixL.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 4, 0));
+        PrefixP.add(PrefixL, java.awt.BorderLayout.NORTH);
+
+        jPanel2.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 24, 0, 1));
+        jPanel2.setLayout(new java.awt.BorderLayout());
 
         PrefixT.setColumns(20);
         PrefixT.setEditable(false);
-        jPanel1.add(PrefixT, java.awt.BorderLayout.CENTER);
+        jPanel2.add(PrefixT, java.awt.BorderLayout.CENTER);
 
         BrowseB.setText("Browse");
         BrowseB.addActionListener(new java.awt.event.ActionListener() {
@@ -73,9 +86,31 @@ public class JConfiguration extends javax.swing.JDialog {
                 BrowseBActionPerformed(evt);
             }
         });
-        jPanel1.add(BrowseB, java.awt.BorderLayout.LINE_END);
+        jPanel2.add(BrowseB, java.awt.BorderLayout.EAST);
 
-        jPanel4.add(jPanel1, java.awt.BorderLayout.NORTH);
+        PrefixP.add(jPanel2, java.awt.BorderLayout.CENTER);
+
+        jPanel4.add(PrefixP, java.awt.BorderLayout.NORTH);
+
+        CommandP.setLayout(new java.awt.BorderLayout());
+
+        CommandL.setText("Use special launcher command (usually empty)");
+        CommandL.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 4, 0));
+        CommandP.add(CommandL, java.awt.BorderLayout.NORTH);
+
+        jPanel1.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 24, 0, 1));
+        jPanel1.setLayout(new java.awt.BorderLayout());
+
+        CommandT.setColumns(20);
+        jPanel1.add(CommandT, java.awt.BorderLayout.NORTH);
+
+        SudoC.setSelected(true);
+        SudoC.setText("Requires SUDO privileges");
+        jPanel1.add(SudoC, java.awt.BorderLayout.CENTER);
+
+        CommandP.add(jPanel1, java.awt.BorderLayout.CENTER);
+
+        jPanel4.add(CommandP, java.awt.BorderLayout.SOUTH);
 
         getContentPane().add(jPanel4, java.awt.BorderLayout.CENTER);
 
@@ -92,19 +127,24 @@ public class JConfiguration extends javax.swing.JDialog {
         fc.setDialogType(JFileChooser.OPEN_DIALOG);
         disableNewFolderButton(fc);
         int result = fc.showOpenDialog(this);
-        if (result == JFileChooser.APPROVE_OPTION) {
-            PortList.invalidatePortLists();
-            Config.base.setPrefix(fc.getSelectedFile().getPath());
-            if (!Config.base.isPrefixValid())
-                JOptionPane.showMessageDialog(this, "Selected path is not a valid MacPorts distribution");
-            PrefixT.setText(Config.base.getPrefix());
-        }
+        if (result == JFileChooser.APPROVE_OPTION)
+            PrefixT.setText(fc.getSelectedFile().getPath());
     }//GEN-LAST:event_BrowseBActionPerformed
+
+    private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
+        Config.base.setPrefix(PrefixT.getText());
+    }//GEN-LAST:event_formWindowClosed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BrowseB;
+    private javax.swing.JLabel CommandL;
+    private javax.swing.JPanel CommandP;
+    private javax.swing.JTextField CommandT;
+    private javax.swing.JLabel PrefixL;
+    private javax.swing.JPanel PrefixP;
     private javax.swing.JTextField PrefixT;
-    private javax.swing.JLabel jLabel1;
+    private javax.swing.JCheckBox SudoC;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel4;
     // End of variables declaration//GEN-END:variables
 
