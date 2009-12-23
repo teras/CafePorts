@@ -108,7 +108,7 @@ public class JConfiguration extends javax.swing.JDialog {
     private javax.swing.JPanel jPanel4;
     // End of variables declaration//GEN-END:variables
 
-    public static void fireDisplay(boolean autoHide) {
+    public static void fireDisplay() {
         SwingUtilities.invokeLater(new Runnable() {
 
             public void run() {

@@ -84,7 +84,7 @@ public class JPortWindow extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
-    public void setStatus(final Status status) {
+    public void setStatus(final Status status, final String message) {
         try {
             SwingUtilities.invokeAndWait(new Runnable() {
 
@@ -101,7 +101,7 @@ public class JPortWindow extends JFrame {
                             break;
                         case ERROR:
                             mainview.add(initialization, BorderLayout.NORTH);
-                            initialization.setInvalidPath();
+                            initialization.setInvalidPath(message);
                             portlist.clearList();
                             bar.setEnabled(false);
                             break;
