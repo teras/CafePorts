@@ -41,7 +41,7 @@ public class PortListManager {
 
             public void run() {
                 if (!Config.base.isPrefixValid()) {
-                    getValidator().window.setStatus(JPortWindow.Status.ERROR, "Prefix directory is not valid");
+                    getValidator().window.setStatus(JPortWindow.Status.ERROR, "Prefix directory " + Config.base.getPrefix() + " is not valid");
                     return;
                 } else
                     getValidator().window.setStatus(JPortWindow.Status.LOADING_1, null);

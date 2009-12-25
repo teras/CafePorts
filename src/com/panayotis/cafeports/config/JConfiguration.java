@@ -60,7 +60,7 @@ public class JConfiguration extends javax.swing.JDialog {
         setResizable(false);
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosed(java.awt.event.WindowEvent evt) {
-                formWindowClosed(evt);
+                fireHide(evt);
             }
         });
 
@@ -131,9 +131,23 @@ public class JConfiguration extends javax.swing.JDialog {
             PrefixT.setText(fc.getSelectedFile().getPath());
     }//GEN-LAST:event_BrowseBActionPerformed
 
-    private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
+    public static void fireDisplay() {
+        SwingUtilities.invokeLater(new Runnable() {
+
+            public void run() {
+                dialog.PrefixT.setText(Config.base.getPrefix());
+                dialog.SudoC.setSelected(Config.base.isWithSudo());
+                dialog.CommandT.setText(Config.base.getLaunchCommand());
+                dialog.setVisible(true);
+            }
+        });
+    }
+
+    private void fireHide(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_fireHide
         Config.base.setPrefix(PrefixT.getText());
-    }//GEN-LAST:event_formWindowClosed
+        Config.base.setWithSudo(SudoC.isSelected());
+        Config.base.setLaunchCommand(CommandT.getText());
+    }//GEN-LAST:event_fireHide
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BrowseB;
     private javax.swing.JLabel CommandL;
@@ -147,16 +161,6 @@ public class JConfiguration extends javax.swing.JDialog {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel4;
     // End of variables declaration//GEN-END:variables
-
-    public static void fireDisplay() {
-        SwingUtilities.invokeLater(new Runnable() {
-
-            public void run() {
-                dialog.PrefixT.setText(Config.base.getPrefix());
-                dialog.setVisible(true);
-            }
-        });
-    }
 
     private void disableNewFolderButton(Container c) {
         int len = c.getComponentCount();

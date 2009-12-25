@@ -19,7 +19,9 @@ import java.util.prefs.Preferences;
 public class Config {
 
     public static Config base = new Config();
-    private static final String PREFIX_PREF = "PREFIX_DIR";
+    private static final String PREF_PREFIX = "PREFIX_DIR";
+    private static final String PREF_SUDO = "USE_SUDO";
+    private static final String PREF_CUSTOMCMD = "USE_SUDO";
     /* */
     static final String DEFAULT_PREFIX_DIR = "/opt/local/";
     /* */
@@ -30,18 +32,22 @@ public class Config {
     /* */
     static final String PORTINDEXFILE = "PortIndex";
     /* */
-    private String prefix;
     private boolean current_prefix_valid;
-    /* */
     private HashSet<ConfigListener> listeners;
+    private Preferences prefs;
     /* */
-    Preferences prefs;
+    private String prefix;
+    private String customlauncher;
+    private boolean useSUDO;
 
     public Config() {
-        prefs = Preferences.userNodeForPackage(Config.class);
-        prefix = prefs.get(PREFIX_PREF, DEFAULT_PREFIX_DIR);
         current_prefix_valid = true;
         listeners = new HashSet<ConfigListener>();
+        prefs = Preferences.userNodeForPackage(Config.class);
+
+        prefix = prefs.get(PREF_PREFIX, DEFAULT_PREFIX_DIR);
+        useSUDO = prefs.getBoolean(PREF_SUDO, true);
+        customlauncher = prefs.get(PREF_CUSTOMCMD, "");
     }
 
     public ArrayList<String> getPortIndices() {
@@ -85,24 +91,6 @@ public class Config {
         return prefix + RECEIPTSDIR;
     }
 
-    public String getPrefix() {
-        return prefix;
-    }
-
-    public synchronized void setPrefix(String prefix) {
-        if (!prefix.endsWith(File.separator))
-            prefix += File.separator;
-        if (this.prefix.equals(prefix))
-            return;
-        PortList.invalidatePortLists();
-        this.prefix = prefix;
-        current_prefix_valid = true;    // Be optimistic!
-        prefs.put(PREFIX_PREF, prefix);
-        if (current_prefix_valid)
-            for (ConfigListener listener : listeners)
-                listener.configIsUpdated();
-    }
-
     public void addListener(ConfigListener listener) {
         listeners.add(listener);
     }
@@ -119,5 +107,41 @@ public class Config {
 
     public void setCurrentPrefixInvalid() {
         current_prefix_valid = false;
+    }
+
+    public String getPrefix() {
+        return prefix;
+    }
+
+    public synchronized void setPrefix(String prefix) {
+        if (!prefix.endsWith(File.separator))
+            prefix += File.separator;
+        if (this.prefix.equals(prefix))
+            return;
+        PortList.invalidatePortLists();
+        this.prefix = prefix;
+        current_prefix_valid = true;    // Be optimistic!
+        prefs.put(PREF_PREFIX, prefix);
+        if (current_prefix_valid)
+            for (ConfigListener listener : listeners)
+                listener.configIsUpdated();
+    }
+
+    public boolean isWithSudo() {
+        return useSUDO;
+    }
+
+    public void setWithSudo(boolean sudostatus) {
+        useSUDO = sudostatus;
+        prefs.putBoolean(PREF_SUDO, useSUDO);
+    }
+
+    public String getLaunchCommand() {
+        return customlauncher;
+    }
+
+    public void setLaunchCommand(String launchcmd) {
+        customlauncher = launchcmd;
+        prefs.put(PREF_CUSTOMCMD, customlauncher);
     }
 }
