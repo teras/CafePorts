@@ -5,7 +5,7 @@
     <import file="nbproject/profiler-build-impl.xml"/>
 
 
-	<property name="version" value="0.1.0.1"/>
+	<property name="version" value="0.1.1"/>
 	<property name="bundlename" value="CafePorts"/>
 
 	<taskdef name="jarbundler"
