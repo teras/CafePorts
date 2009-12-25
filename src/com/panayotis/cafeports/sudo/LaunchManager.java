@@ -4,14 +4,17 @@
  */
 package com.panayotis.cafeports.sudo;
 
+import com.panayotis.cafeports.config.Config;
 import com.panayotis.utilities.Closure;
 import com.panayotis.utilities.Commander;
+import java.util.ArrayList;
+import java.util.StringTokenizer;
 
 /**
  *
  * @author teras
  */
-public class SudoManager {
+public class LaunchManager {
 
     private static final String[] pipedsudo = {
         "sudo",
@@ -27,21 +30,28 @@ public class SudoManager {
     private static boolean sudo_is_ok;
 
     public static void execute(String[] command, Closure out, Closure err, Closure begin) {
-        String pass = SudoManager.getPassword();
-        if (pass == null)
-            return;
-        String[] exec = new String[command.length + pipedsudo.length];
-        System.arraycopy(pipedsudo, 0, exec, 0, pipedsudo.length);
-        System.arraycopy(command, 0, exec, pipedsudo.length, command.length);
+        String pass = null;
 
-        Commander com = new Commander(exec);
+        if (Config.base.isWithSudo()) {
+            pass = LaunchManager.getPassword();
+            if (pass == null)
+                return;
+        }
+
+        String[] cmd = combineStrings(StringToArray(Config.base.getLaunchCommand(), " "), command);
+        if (Config.base.isWithSudo())
+            cmd = combineStrings(pipedsudo, cmd);
+
+        Commander com = new Commander(cmd);
         com.setOutListener(out);
         com.setErrListener(err);
 
         begin.exec(com);
         com.exec();
-        com.sendLine(pass);
-        com.waitFor();
+        if (com.isActive()) {
+            com.sendLine(pass);
+            com.waitFor();
+        }
     }
 
     static boolean testSudo(String pass) {
@@ -87,4 +97,22 @@ public class SudoManager {
         inst.setVisible(true);
         return inst.getUserPass();
     }
+
+    private final static String[] combineStrings(String[] one, String[] two) {
+        String[] result = new String[one.length + two.length];
+        System.arraycopy(one, 0, result, 0, one.length);
+        System.arraycopy(two, 0, result, one.length, two.length);
+        return result;
+    }
+
+    private final static String[] StringToArray(String array, String delimeter) {
+        if (array == null || array.equals(""))
+            return emptyString;
+        ArrayList<String> res = new ArrayList<String>();
+        StringTokenizer tk = new StringTokenizer(array, delimeter);
+        while (tk.hasMoreTokens())
+            res.add(tk.nextToken());
+        return res.toArray(emptyString);
+    }
+    private final static String[] emptyString = new String[]{};
 }

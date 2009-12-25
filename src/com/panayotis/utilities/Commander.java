@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 
 /**
  *
@@ -33,6 +34,10 @@ public class Commander {
     private OutputProxy procerr = null;
     private int exit_value = INVALID_EXIT_VALUE;
     private boolean output_is_terminated = true;
+
+    public Commander(ArrayList<String> command) {
+        this(command.toArray(new String[]{}));
+    }
 
     public Commander(String[] command) {
         this.command = command;
@@ -61,8 +66,10 @@ public class Commander {
         try {
             proc = Runtime.getRuntime().exec(command);
         } catch (IOException ex) {
+            if (err != null)
+                err.exec("Process can not start: " + ex.getMessage());
             if (finish != null)
-                throw new RuntimeException("Process can not start: " + ex.getMessage());
+                finish.exec("");
             return;
         }
         bufferin = new BufferedWriter(new OutputStreamWriter(proc.getOutputStream()));
@@ -73,9 +80,18 @@ public class Commander {
         procerr.worker.start();
     }
 
+    public boolean isActive() {
+        return proc != null;
+    }
+
     public void sendLine(String line) {
-        if (bufferin == null)
-            throw new RuntimeException("Request to send data inappropriate: process not active");
+        if (bufferin == null) {
+            if (err != null)
+                err.exec("Request to send data inappropriate: process not active");
+            return;
+        }
+        if (line == null)
+            return;
         try {
             bufferin.write(line);
             bufferin.newLine();
@@ -137,10 +153,11 @@ public class Commander {
         }
     }
 
-    private synchronized void doKill() {
-        if (proc == null)
-            return;
-        proc.destroy();
+    private void doKill() {
+        try {
+            proc.destroy();
+        } catch (Exception e) {
+        }
     }
 
     public void kill() {

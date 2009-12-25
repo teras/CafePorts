@@ -126,7 +126,7 @@ public class JSudo extends JDialog {
 
             public void run() {
                 String newp = new String(Password.getPassword());
-                if (SudoManager.testSudo(newp)) {
+                if (LaunchManager.testSudo(newp)) {
                     pass = newp;
                     MsgLabel.setForeground(Color.BLACK);
                     MsgLabel.setText(" ");

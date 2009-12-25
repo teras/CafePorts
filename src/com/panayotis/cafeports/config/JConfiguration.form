@@ -169,7 +169,7 @@
                 <Component class="javax.swing.JCheckBox" name="SudoC">
                   <Properties>
                     <Property name="selected" type="boolean" value="true"/>
-                    <Property name="text" type="java.lang.String" value="Requires SUDO privileges"/>
+                    <Property name="text" type="java.lang.String" value="Requires SUDO privileges (recommended)"/>
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">

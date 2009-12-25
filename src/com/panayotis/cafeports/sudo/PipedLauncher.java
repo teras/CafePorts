@@ -4,6 +4,7 @@
  */
 package com.panayotis.cafeports.sudo;
 
+import com.panayotis.cafeports.config.Config;
 import com.panayotis.utilities.Closure;
 import com.panayotis.utilities.Commander;
 import java.io.BufferedReader;
@@ -64,6 +65,9 @@ public class PipedLauncher {
 
     public final static void sendKillSignal(Commander c) {
         if (c != null)
-            c.sendLine(KILLSIGNAL);
+            if (Config.base.isWithSudo())
+                c.sendLine(KILLSIGNAL);
+            else
+                c.kill();
     }
 }

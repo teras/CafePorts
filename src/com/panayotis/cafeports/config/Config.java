@@ -21,7 +21,7 @@ public class Config {
     public static Config base = new Config();
     private static final String PREF_PREFIX = "PREFIX_DIR";
     private static final String PREF_SUDO = "USE_SUDO";
-    private static final String PREF_CUSTOMCMD = "USE_SUDO";
+    private static final String PREF_CUSTOMCMD = "CUSTOM_CMD";
     /* */
     static final String DEFAULT_PREFIX_DIR = "/opt/local/";
     /* */

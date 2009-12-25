@@ -105,7 +105,7 @@ public class JConfiguration extends javax.swing.JDialog {
         jPanel1.add(CommandT, java.awt.BorderLayout.NORTH);
 
         SudoC.setSelected(true);
-        SudoC.setText("Requires SUDO privileges");
+        SudoC.setText("Requires SUDO privileges (recommended)");
         jPanel1.add(SudoC, java.awt.BorderLayout.CENTER);
 
         CommandP.add(jPanel1, java.awt.BorderLayout.CENTER);
@@ -148,6 +148,7 @@ public class JConfiguration extends javax.swing.JDialog {
         Config.base.setWithSudo(SudoC.isSelected());
         Config.base.setLaunchCommand(CommandT.getText());
     }//GEN-LAST:event_fireHide
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BrowseB;
     private javax.swing.JLabel CommandL;

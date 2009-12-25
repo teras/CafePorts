@@ -9,7 +9,7 @@ import com.panayotis.utilities.Commander;
 import com.panayotis.cafeports.config.Config;
 import com.panayotis.cafeports.db.PortInfo;
 import com.panayotis.cafeports.sudo.PipedLauncher;
-import com.panayotis.cafeports.sudo.SudoManager;
+import com.panayotis.cafeports.sudo.LaunchManager;
 import javax.swing.SwingUtilities;
 
 /**
@@ -72,7 +72,7 @@ public class PortProcess {
         Thread sudothread = new Thread() {
 
             public void run() {
-                SudoManager.execute(exe, out, err, begin);
+                LaunchManager.execute(exe, out, err, begin);
                 try {
                     SwingUtilities.invokeAndWait(new Runnable() {
 
