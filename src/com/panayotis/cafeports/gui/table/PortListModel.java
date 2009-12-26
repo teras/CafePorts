@@ -17,14 +17,14 @@ import javax.swing.table.AbstractTableModel;
  */
 public class PortListModel extends AbstractTableModel implements SelectableColumns {
 
-    private static final String[] Columns = {"⎈", "Name", "Categories", "Version", "Installed Version", "Home page", "Maintainers", "Description"};
-    private static final String[] ColData = {"installflags", "name", "categories", "version", "installed_version", "homepage", "maintainers", "description"};
+    private static final String[] Columns = {"⎈", "Name", "Categories", "Version", "Variants", "Installed Version", "Home page", "Maintainers", "Description"};
+    private static final String[] ColData = {"installflags", "name", "categories", "version", "variants", "installed_version", "homepage", "maintainers", "description"};
     public static final int FIRST_COLUMN_SIZE = 16;
     public static final int PREFERRED_COLUMN_SIZE = 100;
     public static final int MAXIMUM_COLUMN_SIZE = 500;
     public static final int MINIMUM_COLUMN_SIZE = 10;
     /* Core variables */
-    private boolean[] visible_cols = {true, true, false, true, false, false, false, true};
+    private boolean[] visible_cols = {true, true, false, true, false, false, false, false, true};
     private PortList list;
     /* helper variables */
     private JSelector sel = new JSelector();
