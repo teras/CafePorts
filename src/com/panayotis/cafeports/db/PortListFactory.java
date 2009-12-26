@@ -29,12 +29,12 @@ public class PortListFactory {
 
     private static final String CACHEHASH;
     private static final File cache;
-    private static final HashMap<String, Tuplet> hashes;
+    private static final HashMap<String, Tuple> hashes;
 
     static {
         CACHEHASH = System.getProperty("user.home") + File.separator + "Library" + File.separator + "Application Support" + File.separator + "CafePorts" + File.separator + "installation.cache";
         cache = new File(CACHEHASH);
-        HashMap<String, Tuplet> ondisk = new HashMap<String, Tuplet>();
+        HashMap<String, Tuple> ondisk = new HashMap<String, Tuple>();
 
         if (cache.isFile() && cache.canRead()) {
             ObjectInputStream in = null;
@@ -42,7 +42,6 @@ public class PortListFactory {
                 in = new ObjectInputStream(new FileInputStream(cache));
                 ondisk = (HashMap) in.readObject();
             } catch (Exception ex) {
-                ondisk = new HashMap<String, Tuplet>();
                 System.out.println("Unable to read cache file " + CACHEHASH + ": " + ex.getMessage());
             } finally {
                 try {
@@ -105,7 +104,7 @@ public class PortListFactory {
             File allreceipts = new File(Config.base.getReceiptsDir());
             File receiptfile;
             String hashname;
-            Tuplet oldtuple, newtuple;
+            Tuple oldtuple, newtuple;
             if (!(allreceipts.exists() && allreceipts.canRead() && allreceipts.isDirectory()))
                 throw new PortListException("Unable to initialize " + allreceipts.getPath());
 
@@ -124,7 +123,7 @@ public class PortListFactory {
                             receiptfile = new File(versiondir, "receipt.bz2");
                             /* Only if this receipt exists */
                             if (receiptfile.isFile() && receiptfile.canRead()) {
-                                newtuple = new Tuplet(receiptfile);
+                                newtuple = new Tuple(receiptfile);
                                 oldtuple = hashes.get(hashname);
                                 /* file found which was not stored before! */
                                 if (!newtuple.equals(oldtuple)) {
@@ -183,7 +182,7 @@ public class PortListFactory {
         list.addCategory(tag, out);
     }
 
-    private static void updateTuple(Tuplet tup, File receiptfile) {
+    private static void updateTuple(Tuple tup, File receiptfile) {
         FileInputStream fin = null;
         BufferedReader in = null;
         try {
@@ -223,19 +222,19 @@ public class PortListFactory {
         hashes.clear();
     }
 
-    private final static class Tuplet implements Serializable {
+    private final static class Tuple implements Serializable {
 
         private long time;
         private long size;
         private boolean isActive;
         private String version;
 
-        private Tuplet(File f) {
+        private Tuple(File f) {
             time = f.lastModified();
             size = f.length();
         }
 
-        public boolean equals(Tuplet other) {
+        public boolean equals(Tuple other) {
             if (other == null)
                 return false;
             return other.time == time && other.size == size;

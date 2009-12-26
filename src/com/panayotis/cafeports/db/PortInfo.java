@@ -66,6 +66,7 @@ public class PortInfo implements Comparable {
     }
 
     private static void store(HashMap<String, String> values, String key, String value) {
+        /* Fix email */
         if (key.equals("maintainers"))
             if (!value.equals("nomaintainer")) {
                 StringBuffer buffer = new StringBuffer();
@@ -87,8 +88,11 @@ public class PortInfo implements Comparable {
                 value = buffer.substring(0, buffer.length() - 1);
             } else
                 value = null;
-        if (value != null)
+
+        if (value != null) {
+            value = value.replace("{", "").replace("}", "");
             values.put(key, value);
+        }
     }
 
     private static final int countChar(String str, char q) {
