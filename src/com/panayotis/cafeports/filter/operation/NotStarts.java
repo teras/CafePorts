@@ -21,6 +21,8 @@ public class NotStarts extends Operation {
     public boolean isValid(String portdata, String userdata) {
         if (portdata == null || userdata == null)
             return false;
+        if (userdata.equals(""))
+            return true;
         return !portdata.startsWith(userdata);
     }
 
