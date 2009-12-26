@@ -40,6 +40,8 @@ public class JSortableColumnsTable extends JScrollPane {
         colsel.addMouseListener(new MouseAdapter() {
 
             public void mouseClicked(MouseEvent ev) {
+                if (!colsel.isEnabled())
+                    return;
                 ((SelectableColumns) sorter.getTableModel()).selectVisibleColumns(ev, new Closure() {
 
                     public void exec(Object data) {
@@ -83,6 +85,7 @@ public class JSortableColumnsTable extends JScrollPane {
     public void setEnabled(boolean status) {
         super.setEnabled(status);
         colsel.setEnabled(status);
+        tbl.setEnabled(status);
     }
 
     public TableSorter getTableSorterModel() {
