@@ -105,6 +105,12 @@ public class JSudo extends JDialog {
         PassPanel.add(LeftPassPanel, java.awt.BorderLayout.WEST);
 
         RightPassPanel.setLayout(new java.awt.GridLayout(1, 1, 0, 4));
+
+        Password.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                PasswordActionPerformed(evt);
+            }
+        });
         RightPassPanel.add(Password);
 
         PassPanel.add(RightPassPanel, java.awt.BorderLayout.CENTER);
@@ -150,6 +156,10 @@ public class JSudo extends JDialog {
         setVisible(false);
         dispose();
 }//GEN-LAST:event_DenyBActionPerformed
+
+    private void PasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_PasswordActionPerformed
+        AllowBActionPerformed(evt);
+    }//GEN-LAST:event_PasswordActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton AllowB;
     private javax.swing.JPanel ButtonPanel;
