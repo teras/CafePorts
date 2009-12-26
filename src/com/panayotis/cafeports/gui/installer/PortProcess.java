@@ -72,17 +72,17 @@ public class PortProcess {
         Thread sudothread = new Thread() {
 
             public void run() {
-                LaunchManager.execute(exe, out, err, begin);
-                try {
-                    SwingUtilities.invokeAndWait(new Runnable() {
+                if (LaunchManager.execute(exe, out, err, begin))
+                    try {
+                        SwingUtilities.invokeAndWait(new Runnable() {
 
-                        public void run() {
-                            call_parent.exec(null);
-                            jproc.finishExec();
-                        }
-                    });
-                } catch (Exception ex) {
-                }
+                            public void run() {
+                                call_parent.exec(null);
+                                jproc.finishExec();
+                            }
+                        });
+                    } catch (Exception ex) {
+                    }
             }
         };
         sudothread.start();

@@ -29,13 +29,13 @@ public class LaunchManager {
     private static JSudo inst;
     private static boolean sudo_is_ok;
 
-    public static void execute(String[] command, Closure out, Closure err, Closure begin) {
+    public static boolean execute(String[] command, Closure out, Closure err, Closure begin) {
         String pass = null;
 
         if (Config.base.isWithSudo()) {
             pass = LaunchManager.getPassword();
             if (pass == null)
-                return;
+                return false;
         }
 
         String[] cmd = combineStrings(StringToArray(Config.base.getLaunchCommand(), " "), command);
@@ -52,6 +52,7 @@ public class LaunchManager {
             com.sendLine(pass);
             com.waitFor();
         }
+        return true;
     }
 
     static boolean testSudo(String pass) {
