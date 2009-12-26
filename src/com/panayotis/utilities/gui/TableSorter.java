@@ -14,8 +14,9 @@ This software is provided "AS IS," without a warranty of any kind. ALL EXPRESS O
 
 You acknowledge that this software is not designed, licensed or intended for use in the design, construction, operation or maintenance of any nuclear facility.
  */
-package com.panayotis.cafeports.gui.table;
+package com.panayotis.utilities.gui;
 
+import com.panayotis.cafeports.gui.table.*;
 import com.panayotis.utilities.Closure;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -46,6 +47,7 @@ import javax.swing.UIManager;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
@@ -108,8 +110,6 @@ import javax.swing.table.TableModel;
  */
 public class TableSorter extends AbstractTableModel {
 
-    public JPortList hack_for_table_columns_update;
-    /* */
     protected TableModel tableModel;
     public static final int DESCENDING = -1;
     public static final int NOT_SORTED = 0;
@@ -155,26 +155,19 @@ public class TableSorter extends AbstractTableModel {
     };
     private Row[] viewToModel;
     private int[] modelToView;
-    private JTableHeader tableHeader;
+    private JTable table;
     private MouseListener mouseListener;
     private TableModelListener tableModelListener;
     private Map<Class, Comparator<Object>> columnComparators = new HashMap<Class, Comparator<Object>>();
     private List<Directive> sortingColumns = new ArrayList<Directive>();
 
-    public TableSorter() {
+    public TableSorter(JTable tbl) {
         this.mouseListener = new MouseHandler();
         this.tableModelListener = new TableModelHandler();
-    }
-
-    public TableSorter(TableModel tableModel) {
-        this();
-        setTableModel(tableModel);
-    }
-
-    public TableSorter(TableModel tableModel, JTableHeader tableHeader) {
-        this();
-        setTableHeader(tableHeader);
-        setTableModel(tableModel);
+        this.table = tbl;
+        setTableHeader(table.getTableHeader());
+        table.setModel(this);
+        setTableModel(new DefaultTableModel());
     }
 
     private void clearSortingState() {
@@ -198,17 +191,12 @@ public class TableSorter extends AbstractTableModel {
         fireTableStructureChanged();
     }
 
-    public JTableHeader getTableHeader() {
-        return tableHeader;
-    }
-
     public void setTableHeader(JTableHeader tableHeader) {
-        if (this.tableHeader != null)
-            this.tableHeader.removeMouseListener(mouseListener);
-        this.tableHeader = tableHeader;
-        if (this.tableHeader != null) {
-            this.tableHeader.addMouseListener(mouseListener);
-            this.tableHeader.setDefaultRenderer(new SortableHeaderRenderer());
+        if (tableHeader != null) {
+            table.getTableHeader().removeMouseListener(mouseListener);
+            table.setTableHeader(tableHeader);
+            tableHeader.addMouseListener(mouseListener);
+            tableHeader.setDefaultRenderer(new SortableHeaderRenderer());
         }
     }
 
@@ -232,8 +220,7 @@ public class TableSorter extends AbstractTableModel {
     private void sortingStatusChanged() {
         clearSortingState();
         fireTableDataChanged();
-        if (tableHeader != null)
-            tableHeader.repaint();
+        table.getTableHeader().repaint();
     }
 
     public void setSortingStatus(int column, int status) {
@@ -423,9 +410,11 @@ public class TableSorter extends AbstractTableModel {
     private class MouseHandler extends MouseAdapter {
 
         public void mouseClicked(MouseEvent e) {
+            final JTableHeader header = (JTableHeader) e.getSource();
+            if (!header.getTable().isEnabled())
+                return;
             if (e.getButton() == MouseEvent.BUTTON1) {
-                JTableHeader h = (JTableHeader) e.getSource();
-                TableColumnModel columnModel = h.getColumnModel();
+                TableColumnModel columnModel = header.getColumnModel();
                 int viewColumn = columnModel.getColumnIndexAtX(e.getX());
                 int column = columnModel.getColumn(viewColumn).getModelIndex();
                 if (column != -1) {
@@ -446,7 +435,8 @@ public class TableSorter extends AbstractTableModel {
                 ((SelectableColumns) tableModel).selectVisibleColumns(e, new Closure() {
 
                     public void exec(Object data) {
-                        hack_for_table_columns_update.hack_for_table_has_changed();
+                        fireTableStructureChanged();
+                        ((JSortableColumnsTable) table.getParent().getParent()).updateColumnSizes();
                     }
                 });
         }
