@@ -6,6 +6,7 @@ package com.panayotis.cafeports.filter;
 
 import com.panayotis.cafeports.db.PortInfo;
 import com.panayotis.cafeports.db.PortList;
+import com.panayotis.cafeports.filter.portdata.PortAnyDescription;
 import com.panayotis.cafeports.filter.portdata.PortCategory;
 import com.panayotis.cafeports.filter.portdata.PortDescription;
 import com.panayotis.cafeports.filter.portdata.PortLongDescription;
@@ -32,9 +33,10 @@ public class FilterFactory {
 
     {
         sources = new MutableArray<PortData>();
-        sources.add(new PortName());
+        sources.add(new PortAnyDescription());
         sources.add(new PortCategory());
         sources.add(new PortVersion());
+        sources.add(new PortName());
         sources.add(new PortDescription());
         sources.add(new PortLongDescription());
         sources.add(new PortVariant());
@@ -85,8 +87,10 @@ public class FilterFactory {
             this.container = container;
             if (user instanceof UpdateableUserData) {
                 String tag = port.getTag();
-                Vector<String> data = PortList.getFilteredPortList().getCategory(tag);
-                ((UpdateableUserData) user).updateData(data);
+                if (tag != null && tag.length() > 0) {
+                    Vector<String> data = PortList.getFilteredPortList().getCategory(tag);
+                    ((UpdateableUserData) user).updateData(data);
+                }
             }
         }
 

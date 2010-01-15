@@ -20,6 +20,6 @@ public class PortLongDescription extends PortData {
     }
 
     public PortLongDescription() {
-        super("Long description", "long_description");
+        super("Long Description", "long_description");
     }
 }

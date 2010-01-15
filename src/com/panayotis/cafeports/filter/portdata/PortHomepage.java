@@ -20,6 +20,6 @@ public class PortHomepage extends PortData{
     }
 
     public PortHomepage() {
-        super("Home page", "homepage");
+        super("Home Page", "homepage");
     }
 }
