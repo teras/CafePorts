@@ -38,7 +38,9 @@ public class JProcess extends javax.swing.JDialog {
         ScrollArea.setVisible(false);
         this.cancel = cancel;
         pack();
+    }
 
+    public void beginTimer() {
         last_total_time = System.currentTimeMillis();
         last_stage_time = last_total_time;
         totalT = new Timer();

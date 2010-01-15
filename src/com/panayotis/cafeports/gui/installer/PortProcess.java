@@ -46,6 +46,7 @@ public class PortProcess {
                 SwingUtilities.invokeLater(new Runnable() {
 
                     public void run() {
+                        jproc.beginTimer();
                         jproc.updateStatus(null);
                         jproc.setVisible(true);
                     }
