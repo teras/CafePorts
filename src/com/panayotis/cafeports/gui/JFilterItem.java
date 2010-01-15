@@ -105,6 +105,8 @@ public class JFilterItem extends JPanel implements Closure {
             o = p.getOperations().getItem(Integer.parseInt(index.toString()));
         }
         Filter newf = FilterFactory.base.getFilter(p, o, container);
+        newf.getUserData().setData(filter.getUserData().getData());
+        newf.getUserData().requestUpdateVisuals();
         container.replaceFilter(newf, filter);
     }
 
