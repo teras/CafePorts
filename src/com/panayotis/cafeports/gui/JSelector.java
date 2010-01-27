@@ -10,6 +10,8 @@ import com.panayotis.utilities.Closure;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.URL;
+import javax.swing.ImageIcon;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
@@ -27,18 +29,18 @@ public class JSelector extends JPopupMenu {
         show(comp, comp.getBorder().getBorderInsets(comp).left / 2, comp.getHeight() - comp.getBorder().getBorderInsets(comp).bottom + 1);
     }
 
-    public void fireSelector(String[] values, JComponent comp, final Closure listener) {
-        setItems(values, null, 0, listener);
+    public void fireSelector(String[] values, JComponent comp, boolean with_icons, final Closure listener) {
+        setItems(values, null, with_icons, 0, listener);
         Insets ins = (comp.getBorder() == null) ? new Insets(0, 0, 0, 0) : comp.getBorder().getBorderInsets(comp);
         show(comp, ins.left / 2, comp.getHeight() - ins.bottom + 1);
     }
 
-    public void fireSelector(String[] values, boolean[] selected, JComponent comp, int x, int y, final Closure listener) {
-        setItems(values, selected, 1, listener);
+    public void fireSelector(String[] values, boolean[] selected, boolean with_icons, JComponent comp, int x, int y, final Closure listener) {
+        setItems(values, selected, with_icons, 1, listener);
         show(comp, x, y);
     }
 
-    public void setItems(String[] values, boolean[] selected, int offset, final Closure listener) {
+    public void setItems(String[] values, boolean[] selected, boolean with_icons, int offset, final Closure listener) {
         removeAll();
         for (int i = offset; i < values.length; i++) {
             String val = values[i];
@@ -46,8 +48,16 @@ public class JSelector extends JPopupMenu {
             if (val == null)
                 item = new JSeparator();
             else {
-                JCheckBoxMenuItem itemc = new JCheckBoxMenuItem(values[i]);
+                JCheckBoxMenuItem itemc = new JCheckBoxMenuItem(" " + values[i]);
                 itemc.setActionCommand(Integer.toString(i));
+                if (with_icons) {
+                    String iconname = "/icons/" + values[i] + ".png";
+                    URL iloc = getClass().getResource(iconname);
+                    if (iloc == null)
+                        System.err.println("Icon " + iconname + " not found.");
+                    else
+                        itemc.setIcon(new ImageIcon(iloc));
+                }
                 if (selected != null)
                     itemc.setState(selected[i]);
                 itemc.addActionListener(new ActionListener() {

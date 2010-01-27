@@ -97,7 +97,7 @@ public class JBar extends JPanel implements ActionListener {
         for (int i = 0; i < 3; i++)
             toolbarselection[i] = false;
         toolbarselection[labeltype.ordinal()] = true;
-        iconsel.setItems(toolbartext, toolbarselection, 0, listener);
+        iconsel.setItems(toolbartext, toolbarselection, false, 0, listener);
         frame.doLayout();
     }
 
@@ -108,7 +108,7 @@ public class JBar extends JPanel implements ActionListener {
         info.setIconSize(smallSize);
 
         toolbarselection[4] = smallSize;
-        iconsel.setItems(toolbartext, toolbarselection, 0, listener);
+        iconsel.setItems(toolbartext, toolbarselection, false, 0, listener);
         frame.doLayout();
     }
 
@@ -133,7 +133,7 @@ public class JBar extends JPanel implements ActionListener {
     public void actionPerformed(ActionEvent ev) {
         switch (ev.getActionCommand().charAt(0)) {
             case 'a':
-                actionsel.fireSelector(actionnames, action, new Closure() {
+                actionsel.fireSelector(actionnames, action, true, new Closure() {
 
                     public void exec(Object data) {
                         PortInfo[] ports = frame.getJPortList().getSelectedPorts();
