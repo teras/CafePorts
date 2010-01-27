@@ -78,7 +78,7 @@ public class PortListModel extends AbstractTableModel implements SelectableColum
 
     public void selectVisibleColumns(MouseEvent event, final Closure call_me_back) {
         JComponent comp = (JComponent) event.getSource();
-        sel.showColumns(Columns, visible_cols, comp, event.getX(), event.getY(), new Closure() {
+        sel.fireSelector(Columns, visible_cols, comp, event.getX(), event.getY(), new Closure() {
 
             public void exec(Object data) {
                 int idx = Integer.parseInt(data.toString());

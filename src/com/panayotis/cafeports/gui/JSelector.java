@@ -7,6 +7,7 @@ package com.panayotis.cafeports.gui;
 import com.panayotis.utilities.ImmutableList;
 import com.panayotis.cafeports.filter.Nameable;
 import com.panayotis.utilities.Closure;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JCheckBoxMenuItem;
@@ -21,12 +22,18 @@ import javax.swing.JSeparator;
  */
 public class JSelector extends JPopupMenu {
 
-    public void showCategories(ImmutableList<Nameable> operations, JComponent comp, final Closure listener) {
-        setItems(operations, listener);
+    public void fireSelector(ImmutableList<Nameable> values, JComponent comp, final Closure listener) {
+        setItems(values, listener);
         show(comp, comp.getBorder().getBorderInsets(comp).left / 2, comp.getHeight() - comp.getBorder().getBorderInsets(comp).bottom + 1);
     }
 
-    public void showColumns(String[] values, boolean[] selected, JComponent comp, int x, int y, final Closure listener) {
+    public void fireSelector(String[] values, JComponent comp, final Closure listener) {
+        setItems(values, null, 0, listener);
+        Insets ins = (comp.getBorder() == null) ? new Insets(0, 0, 0, 0) : comp.getBorder().getBorderInsets(comp);
+        show(comp, ins.left / 2, comp.getHeight() - ins.bottom + 1);
+    }
+
+    public void fireSelector(String[] values, boolean[] selected, JComponent comp, int x, int y, final Closure listener) {
         setItems(values, selected, 1, listener);
         show(comp, x, y);
     }
@@ -41,7 +48,8 @@ public class JSelector extends JPopupMenu {
             else {
                 JCheckBoxMenuItem itemc = new JCheckBoxMenuItem(values[i]);
                 itemc.setActionCommand(Integer.toString(i));
-                itemc.setState(selected[i]);
+                if (selected != null)
+                    itemc.setState(selected[i]);
                 itemc.addActionListener(new ActionListener() {
 
                     public void actionPerformed(ActionEvent e) {

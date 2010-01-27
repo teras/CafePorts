@@ -80,10 +80,10 @@ public class JFilterItem extends JPanel implements Closure {
 
             public void actionPerformed(ActionEvent e) {
                 if (e.getActionCommand().equals("1")) {
-                    opselector.showCategories((ImmutableList) FilterFactory.base.getSources(), (JButton) e.getSource(), self);
+                    opselector.fireSelector((ImmutableList) FilterFactory.base.getSources(), (JButton) e.getSource(), self);
                     last_popup_is_source = true;
                 } else if (e.getActionCommand().equals("2")) {
-                    opselector.showCategories((ImmutableList) filter.getPortData().getOperations(), (JButton) e.getSource(), self);
+                    opselector.fireSelector((ImmutableList) filter.getPortData().getOperations(), (JButton) e.getSource(), self);
                     last_popup_is_source = false;
                 } else if (e.getActionCommand().equals("+"))
                     container.addFilter(FilterFactory.base.getNextFilter(filter, container), filter);

@@ -58,11 +58,12 @@ public class JPortWindow extends JFrame {
 
             public void valueChanged(ListSelectionEvent ev) {
                 PortInfo[] selected = portlist.getSelectedPorts();
-                if (selected == null || selected.length < 1)
+                if (selected.length < 1)
                     info.updateInfo(null);
                 else
                     info.updateInfo(selected[0]);
                 bottombar.setHowMany(PortList.countBasePortList(), PortList.getFilteredPortList().getSize(), selected.length);
+                bar.updateActionStatus(selected.length > 0);
             }
         });
 
